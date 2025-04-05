@@ -5,20 +5,20 @@ import '../../data/model/faq_item_model.dart';
 class FaqPageController extends ChangeNotifier {
   final List<FaqItem> _faqItems = [
     FaqItem(
-      question: "What is Flutter?",
+      question: "Nostrum facilis?",
       answer:
-          "Flutter is an open-source UI software development toolkit created by Google.",
+          "Nostrum facilis voluptatum voluptates sunt facere, distinctio ullam aspernatur cumque autem a esse non unde, nemo iusto",
     ),
     FaqItem(
-      question: "How does Flutter work?",
+      question: "voluptatum voluptates?",
       answer:
-          "Flutter works by compiling to native code for both iOS and Android.",
+          "Nostrum facilis voluptatum voluptates sunt facere, distinctio ullam aspernatur cumque autem a esse non unde, nemo iusto!",
     ),
     FaqItem(
-      question: "What is Dart?",
-      answer: "Dart is the programming language used to build Flutter apps.",
+      question: "sunt facere?",
+      answer:
+          "Nostrum facilis voluptatum voluptates sunt facere, distinctio ullam aspernatur cumque autem a esse non unde, nemo iusto!",
     ),
-    // Add more FAQ items as needed
   ];
 
   //public getters

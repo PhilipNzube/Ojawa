@@ -21,7 +21,6 @@ class _FaqPageState extends State<FaqPage> {
           children: [
             Column(
               children: [
-                // Header
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: Container(
@@ -54,7 +53,6 @@ class _FaqPageState extends State<FaqPage> {
                   ),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(

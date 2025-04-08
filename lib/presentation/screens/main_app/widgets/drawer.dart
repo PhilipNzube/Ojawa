@@ -192,7 +192,7 @@ class MainAppDrawer extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        userName!,
+                        userName ?? "Loading...",
                         style: const TextStyle(
                           fontFamily: 'GolosText',
                           fontSize: 16.0,
@@ -201,7 +201,7 @@ class MainAppDrawer extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        phone!, // Display phone number only if signed in
+                        phone ?? "Loading...",
                         style: const TextStyle(
                           fontFamily: 'GolosText',
                           fontSize: 16.0,

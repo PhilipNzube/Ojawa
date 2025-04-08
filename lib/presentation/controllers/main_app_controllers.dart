@@ -60,7 +60,7 @@ class MainAppControllers extends ChangeNotifier {
     String? savedRole = await storage.read(key: 'userRole');
     if (savedRole != null) {
       _userRole = savedRole;
-      //_userRole = "Logistics";
+      //_userRole = "Vendor";
       notifyListeners();
       // print("From MainAppController: Done");
       // CustomSnackbar.show(
@@ -157,7 +157,11 @@ class MainAppControllers extends ChangeNotifier {
   }
 
   void goToOrdersPage(BuildContext context) {
-    _selectedIndex = 2;
+    if (userRole == "Customer") {
+      _selectedIndex = 2;
+    } else if (userRole == "Vendor") {
+      _selectedIndex = 1;
+    }
     notifyListeners();
     if (userRole == "Customer") {
       Provider.of<NavigationController>(context, listen: false)
@@ -173,6 +177,21 @@ class MainAppControllers extends ChangeNotifier {
 
   void goToProfilePage(BuildContext context) {
     _selectedIndex = 3;
+    notifyListeners();
+    if (userRole == "Customer") {
+      Provider.of<NavigationController>(context, listen: false)
+          .changeTab(_selectedIndex, context, onToggleDarkMode, isDarkMode, 3);
+    } else if (userRole == "Vendor") {
+      Provider.of<NavigationController>(context, listen: false)
+          .changeTab(_selectedIndex, context, onToggleDarkMode, isDarkMode, 3);
+    } else if (userRole == "Logistics") {
+      Provider.of<NavigationController>(context, listen: false)
+          .changeTab(_selectedIndex, context, onToggleDarkMode, isDarkMode, 5);
+    }
+  }
+
+  void goToProductsPage(BuildContext context) {
+    _selectedIndex = 2;
     notifyListeners();
     if (userRole == "Customer") {
       Provider.of<NavigationController>(context, listen: false)

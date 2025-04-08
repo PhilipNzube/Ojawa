@@ -58,12 +58,14 @@ class MyCartController extends ChangeNotifier {
         Uri.parse(url),
         headers: {
           'Authorization': 'Bearer $accessToken',
-          'Content-Type': 'application/json',
+          'Accept': 'text/plain',
         },
       );
 
       final responseData = json.decode(response.body);
       print('Response Data: $responseData');
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         // Extract `cartItems` from the response
@@ -91,7 +93,7 @@ class MyCartController extends ChangeNotifier {
         _isLoading = false;
         notifyListeners();
         CustomSnackbar.show(
-          'Failed to load cart items. (${response.statusCode})',
+          'Failed to load cart items',
           isError: true,
         );
       }

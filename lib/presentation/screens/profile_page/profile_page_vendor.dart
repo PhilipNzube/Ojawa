@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/widgets/custom_gap.dart';
 import '../../../core/widgets/logout_dialog.dart';
+import '../../controllers/main_app_controllers.dart';
 import '../../controllers/profile_page_controller.dart';
 import '../add_new_product/add_new_product.dart';
 import '../edit_profile/edit_profile_vendor.dart';
@@ -266,9 +267,14 @@ class _ProfilePageVendorState extends State<ProfilePageVendor> {
                                     );
                                   },
                                 ),
-                                const ProfileOptions(
+                                ProfileOptions(
                                   title: 'Orders',
                                   img: 'images/Orders2.png',
+                                  onTap: () {
+                                    Provider.of<MainAppControllers>(context,
+                                            listen: false)
+                                        .goToOrdersPage(context);
+                                  },
                                 ),
                                 const ProfileOptions(
                                   title: 'Chat',
@@ -292,10 +298,14 @@ class _ProfilePageVendorState extends State<ProfilePageVendor> {
                                     );
                                   },
                                 ),
-                                const ProfileOptions(
-                                  title: 'Products',
-                                  img: 'images/Products2.png',
-                                ),
+                                ProfileOptions(
+                                    title: 'Products',
+                                    img: 'images/Products2.png',
+                                    onTap: () {
+                                      Provider.of<MainAppControllers>(context,
+                                              listen: false)
+                                          .goToProductsPage(context);
+                                    }),
                                 ProfileOptions(
                                   title: 'Add New Products',
                                   img: 'images/Add New Products.png',

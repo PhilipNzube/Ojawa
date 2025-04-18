@@ -4,7 +4,8 @@ import 'package:provider/provider.dart';
 import '../../../core/widgets/custom_back_handler.dart';
 import '../../../core/widgets/custom_bottom_nav.dart';
 import '../../../core/widgets/logout_dialog.dart';
-import '../../../main.dart';
+// import '../../../main.dart';
+import '../../controllers/home_page_controller.dart';
 import '../../controllers/main_app_controllers.dart';
 import '../../controllers/navigation_controller.dart';
 import '../../controllers/notification_controller.dart';
@@ -20,7 +21,6 @@ import '../products_page/products_page.dart';
 import '../profile_page/profile_page_customer.dart';
 import '../profile_page/profile_page_logistics.dart';
 import '../profile_page/profile_page_vendor.dart';
-import '../wallet_history/wallet_history.dart';
 import '../wallet_page/wallet_page.dart';
 import 'widgets/drawer.dart';
 
@@ -37,7 +37,10 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
   @override
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   Widget build(BuildContext context) {
+    final homePageController = Provider.of<HomePageController>(context);
     final navController = Provider.of<NavigationController>(context);
     //final mainAppController = Provider.of<MainAppControllers>(context);
     final notificationController = Provider.of<NotificationController>(context);
@@ -56,11 +59,12 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                     goToOrdersPage: mainAppController.goToOrdersPage,
                     showLogoutDialog: (context) => showLogoutDialog(
                         context,
-                        (context) => mainAppController.logoutCall(context,
+                        (context) => homePageController.logoutCall(context,
                             widget.onToggleDarkMode, widget.isDarkMode)),
-                    profileImage: mainAppController.profileImage,
-                    userName: mainAppController.userName,
-                    phone: mainAppController.phone,
+                    profileImage: homePageController.profileImage,
+                    userName: homePageController.userName,
+                    phone: homePageController.phone,
+                    // userData: homePageController.userData,
                     checkForToken: mainAppController.checkForToken,
                     goToProfilePage: mainAppController.goToProfilePage,
                     onToggleDarkMode: widget.onToggleDarkMode,
@@ -79,7 +83,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                       goToCategoriesPage: mainAppController.goToCategoriesPage,
                       goToOrdersPage: mainAppController.goToOrdersPage,
                       goToProfilePage: mainAppController.goToProfilePage,
-                      // scaffoldKey: scaffoldKey,
+                      scaffoldKey: scaffoldKey,
                     ),
                     CategoriesPage(
                       goToCategoriesPage: mainAppController.goToCategoriesPage,
@@ -95,18 +99,17 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                             mainAppController.goToCategoriesPage,
                         goToOrdersPage: mainAppController.goToOrdersPage,
                         goToProfilePage: mainAppController.goToProfilePage,
-                        // scaffoldKey: scaffoldKey,
+                        scaffoldKey: scaffoldKey,
                         onToggleDarkMode: widget.onToggleDarkMode,
                         isDarkMode: widget.isDarkMode),
                     ProfilePageCustomer(
-                        goToCategoriesPage:
-                            mainAppController.goToCategoriesPage,
-                        goToOrdersPage: mainAppController.goToOrdersPage,
-                        goToProfilePage: mainAppController.goToProfilePage,
-                        onToggleDarkMode: widget.onToggleDarkMode,
-                        isDarkMode: widget.isDarkMode
-                        // scaffoldKey: scaffoldKey,
-                        ),
+                      goToCategoriesPage: mainAppController.goToCategoriesPage,
+                      goToOrdersPage: mainAppController.goToOrdersPage,
+                      goToProfilePage: mainAppController.goToProfilePage,
+                      onToggleDarkMode: widget.onToggleDarkMode,
+                      isDarkMode: widget.isDarkMode,
+                      scaffoldKey: scaffoldKey,
+                    ),
                   ] else if (mainAppController.userRole == "Vendor") ...[
                     HomePageVendor(
                       selectedIndex: mainAppController.selectedIndex,

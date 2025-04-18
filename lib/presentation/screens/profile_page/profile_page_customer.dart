@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/widgets/auth_text_field.dart';
 import '../../../core/widgets/custom_bg.dart';
 import '../../../core/widgets/custom_gap.dart';
-import '../../../core/widgets/filter.dart';
 import '../../../core/widgets/logout_dialog.dart';
 import '../../controllers/main_app_controllers.dart';
 import '../../controllers/profile_page_controller.dart';
@@ -19,17 +17,16 @@ class ProfilePageCustomer extends StatefulWidget {
   final Function goToProfilePage;
   final Function(bool) onToggleDarkMode;
   final bool isDarkMode;
-  // final GlobalKey<ScaffoldState> scaffoldKey;
+  final GlobalKey<ScaffoldState> scaffoldKey;
 
-  const ProfilePageCustomer({
-    super.key,
-    required this.goToProfilePage,
-    required this.goToCategoriesPage,
-    required this.goToOrdersPage,
-    required this.onToggleDarkMode,
-    required this.isDarkMode,
-    // required this.scaffoldKey
-  });
+  const ProfilePageCustomer(
+      {super.key,
+      required this.goToProfilePage,
+      required this.goToCategoriesPage,
+      required this.goToOrdersPage,
+      required this.onToggleDarkMode,
+      required this.isDarkMode,
+      required this.scaffoldKey});
 
   @override
   _ProfilePageCustomerState createState() => _ProfilePageCustomerState();
@@ -73,7 +70,7 @@ class _ProfilePageCustomerState extends State<ProfilePageCustomer> {
                             IconButton(
                               icon: const Icon(Icons.menu),
                               onPressed: () {
-                                scaffoldKey.currentState?.openDrawer();
+                                widget.scaffoldKey.currentState?.openDrawer();
                               },
                             ),
                             const Text('My Profile',
@@ -310,7 +307,7 @@ class _ProfilePageCustomerState extends State<ProfilePageCustomer> {
                                                         isHorizontal: true),
                                                     Flexible(
                                                       child: Text(
-                                                        '6,000.00',
+                                                        '00.00',
                                                         overflow: TextOverflow
                                                             .ellipsis,
                                                         style: TextStyle(

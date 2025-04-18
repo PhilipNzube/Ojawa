@@ -7,6 +7,7 @@ class CustomTextField extends StatelessWidget {
   final FocusNode focusNode;
   final String fontFamily;
   final TextInputType keyboardType;
+  final String? Function(String?)? validator;
   final List<TextInputFormatter>? inputFormatters;
   final bool isPaddingActive;
   final FloatingLabelBehavior floatingLabelBehavior;
@@ -22,6 +23,7 @@ class CustomTextField extends StatelessWidget {
       this.label,
       this.fontFamily = 'Poppins',
       this.keyboardType = TextInputType.text,
+      this.validator,
       this.inputFormatters,
       this.isPaddingActive = true,
       this.floatingLabelBehavior = FloatingLabelBehavior.never,
@@ -76,6 +78,7 @@ class CustomTextField extends StatelessWidget {
               suffixIcon: suffixIcon),
           cursorColor: Theme.of(context).colorScheme.onSurface,
           keyboardType: keyboardType,
+          validator: validator,
           inputFormatters: inputFormatters,
           maxLines: maxLines,
           readOnly: readOnly,

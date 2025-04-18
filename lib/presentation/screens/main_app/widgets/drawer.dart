@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../controllers/home_page_controller.dart';
 import '../../../controllers/main_app_controllers.dart';
 import '../../auth/sign_in_page.dart';
 import '../../faq_page/faq_page.dart';
@@ -11,6 +12,7 @@ class MainAppDrawer extends StatelessWidget {
   final String? profileImage;
   final String? userName;
   final String? phone;
+  // final Future<void> userData;
   final Future<bool> Function() checkForToken;
   final Function(BuildContext) goToProfilePage;
   final Function(bool) onToggleDarkMode;
@@ -24,6 +26,7 @@ class MainAppDrawer extends StatelessWidget {
     required this.profileImage,
     required this.userName,
     required this.phone,
+    // required this.userData,
     required this.checkForToken,
     required this.goToProfilePage,
     required this.onToggleDarkMode,
@@ -182,12 +185,54 @@ class MainAppDrawer extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            FutureBuilder<bool>(
-              future: checkForToken(), // Function to check for token
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
+            // FutureBuilder<void>(
+            //   future: userData, // Function to check for token
+            //   builder: (context, snapshot) {
+            //     if (snapshot.connectionState == ConnectionState.waiting) {
+            //       return const CircularProgressIndicator(color: Colors.black);
+            //     } else if (snapshot.hasData) {
+            //       return Column(
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         children: [
+            //           Text(
+            //             userName ?? "Loading...",
+            //             style: const TextStyle(
+            //               fontFamily: 'GolosText',
+            //               fontSize: 16.0,
+            //               fontWeight: FontWeight.bold,
+            //               color: Colors.black,
+            //             ),
+            //           ),
+            //           Text(
+            //             phone ?? "Loading...",
+            //             style: const TextStyle(
+            //               fontFamily: 'GolosText',
+            //               fontSize: 16.0,
+            //               color: Colors.black,
+            //             ),
+            //           ),
+            //         ],
+            //       );
+            //     } else {
+            //       return const Text(
+            //         "Not Signed In",
+            //         style: TextStyle(
+            //           fontFamily: 'GolosText',
+            //           fontSize: 16.0,
+            //           fontWeight: FontWeight.bold,
+            //           color: Colors.black,
+            //         ),
+            //       );
+            //     }
+            //   },
+            // ),
+            Consumer<HomePageController>(
+              builder: (context, homePageController, child) {
+                if (homePageController.isLoading) {
                   return const CircularProgressIndicator(color: Colors.black);
-                } else if (snapshot.hasData && snapshot.data == true) {
+                } else if (homePageController.isLoggedOut == false &&
+                    userName != null &&
+                    phone != null) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

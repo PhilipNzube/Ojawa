@@ -179,13 +179,13 @@ class VerifyEmailState extends State<VerifyEmail>
                           if (states.contains(WidgetState.pressed)) {
                             return Colors.white;
                           }
-                          return const Color(0xFF500450);
+                          return const Color(0xFF008000);
                         },
                       ),
                       foregroundColor: WidgetStateProperty.resolveWith<Color>(
                         (Set<WidgetState> states) {
                           if (states.contains(WidgetState.pressed)) {
-                            return const Color(0xFF500450);
+                            return const Color(0xFF008000);
                           }
                           return Colors.white;
                         },

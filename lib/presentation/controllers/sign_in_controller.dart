@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../core/widgets/custom_snackbar.dart';
+import '../../main.dart';
 import '../screens/main_app/main_app.dart';
+import 'home_page_controller.dart';
 
 class SignInController extends ChangeNotifier {
   final FocusNode _userNameFocusNode = FocusNode();
@@ -136,8 +139,6 @@ class SignInController extends ChangeNotifier {
     print('Response Data: $responseData');
 
     if (response.statusCode == 200) {
-      _isLoading = true;
-      notifyListeners();
       final Map<String, dynamic> responseData =
           json.decode(response.body); // Decode the response body
       final String accessToken = responseData['token'];
@@ -163,6 +164,11 @@ class SignInController extends ChangeNotifier {
               isDarkMode: isDarkMode),
         ),
       );
+      _isLoading = false;
+      notifyListeners();
+      Provider.of<HomePageController>(navigatorKey.currentContext!,
+              listen: false)
+          .refreshController();
     } else if (response.statusCode == 400) {
       _isLoading = false;
       notifyListeners();

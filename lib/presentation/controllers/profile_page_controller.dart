@@ -4,13 +4,16 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/widgets/custom_snackbar.dart';
 import '../../core/widgets/error_dialog.dart';
 import '../../core/widgets/no_internet_dialog.dart';
 import '../../core/widgets/time_out_error_dialog.dart';
+import '../../main.dart';
 import '../screens/auth/sign_in_page.dart';
+import 'home_page_controller.dart';
 
 class ProfilePageController extends ChangeNotifier {
   final TextEditingController searchController = TextEditingController();
@@ -127,6 +130,9 @@ class ProfilePageController extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
+        Provider.of<HomePageController>(navigatorKey.currentContext!,
+                listen: false)
+            .setIsLoggedOut(false);
         final responseData = json.decode(response.body);
 
         // Access the user data from the nested "data" key

@@ -22,18 +22,17 @@ class HomePageCustomer extends StatefulWidget {
   final Function goToCategoriesPage;
   final Function goToOrdersPage;
   final Function goToProfilePage;
-  // final GlobalKey<ScaffoldState> scaffoldKey;
+  final GlobalKey<ScaffoldState> scaffoldKey;
 
-  const HomePageCustomer({
-    super.key,
-    required this.selectedIndex,
-    required this.onToggleDarkMode,
-    required this.isDarkMode,
-    required this.goToOrdersPage,
-    required this.goToCategoriesPage,
-    required this.goToProfilePage,
-    // required this.scaffoldKey
-  });
+  const HomePageCustomer(
+      {super.key,
+      required this.selectedIndex,
+      required this.onToggleDarkMode,
+      required this.isDarkMode,
+      required this.goToOrdersPage,
+      required this.goToCategoriesPage,
+      required this.goToProfilePage,
+      required this.scaffoldKey});
 
   @override
   State<HomePageCustomer> createState() => _HomePageCustomerState();
@@ -81,7 +80,7 @@ class _HomePageCustomerState extends State<HomePageCustomer>
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                     onPressed: () {
-                      scaffoldKey.currentState?.openDrawer();
+                      widget.scaffoldKey.currentState?.openDrawer();
                     },
                   ),
                   Text(

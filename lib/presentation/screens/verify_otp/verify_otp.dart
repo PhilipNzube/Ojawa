@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:provider/provider.dart';
 
@@ -78,6 +76,7 @@ class VerifyOtpState extends State<VerifyOtp> {
                         Center(
                           child: Text(
                             "Enter the OTP sent to ${widget.email}",
+                            textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 15.0,

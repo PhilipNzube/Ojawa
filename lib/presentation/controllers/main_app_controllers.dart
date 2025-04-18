@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'dart:async';
 
 import '../../core/widgets/custom_snackbar.dart';
+import '../../main.dart';
 import '../screens/auth/sign_in_page.dart';
 import 'navigation_controller.dart';
 
@@ -220,31 +221,30 @@ class MainAppControllers extends ChangeNotifier {
       bool isDarkMode) async {
     final String? accessToken = await storage.read(key: 'accessToken');
     if (accessToken == null) {
+      Navigator.pop(navigatorKey.currentContext!);
       CustomSnackbar.show(
         'You are not logged in.',
         isError: true,
       );
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SignInPage(
-              key: UniqueKey(),
-              onToggleDarkMode: onToggleDarkMode,
-              isDarkMode: isDarkMode),
-        ),
-      );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => SignInPage(
+      //         key: UniqueKey(),
+      //         onToggleDarkMode: onToggleDarkMode,
+      //         isDarkMode: isDarkMode),
+      //   ),
+      // );
 
       _isLoading = false;
       notifyListeners();
       return;
     }
-    _isLoading = true;
     await storage.delete(key: 'accessToken');
     // await prefs.remove('user');
 
     Navigator.push(
-      context,
+      navigatorKey.currentContext!,
       MaterialPageRoute(
         builder: (context) => SignInPage(
             key: UniqueKey(),
@@ -252,5 +252,7 @@ class MainAppControllers extends ChangeNotifier {
             isDarkMode: isDarkMode),
       ),
     );
+    _isLoading = false;
+    notifyListeners();
   }
 }

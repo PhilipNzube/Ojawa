@@ -10,7 +10,7 @@ class OrdersPageCustomer extends StatefulWidget {
   final Function goToCategoriesPage;
   final Function goToOrdersPage;
   final Function goToProfilePage;
-  // final GlobalKey<ScaffoldState> scaffoldKey;
+  final GlobalKey<ScaffoldState> scaffoldKey;
   final Function(bool) onToggleDarkMode;
   final bool isDarkMode;
 
@@ -19,7 +19,7 @@ class OrdersPageCustomer extends StatefulWidget {
       required this.goToOrdersPage,
       required this.goToCategoriesPage,
       required this.goToProfilePage,
-      // required this.scaffoldKey,
+      required this.scaffoldKey,
       required this.onToggleDarkMode,
       required this.isDarkMode});
 
@@ -64,7 +64,7 @@ class _OrdersPageCustomerState extends State<OrdersPageCustomer> {
                             IconButton(
                               icon: const Icon(Icons.menu),
                               onPressed: () {
-                                scaffoldKey.currentState?.openDrawer();
+                                widget.scaffoldKey.currentState?.openDrawer();
                               },
                             ),
                             const Text('Orders',

@@ -29,8 +29,6 @@ class VerifyOtpController extends ChangeNotifier {
   }
 
   Future<void> submitOtp(BuildContext context) async {
-    // Show loading indicator
-
     _isLoading = true;
     notifyListeners();
 

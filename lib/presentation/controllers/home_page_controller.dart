@@ -12,9 +12,9 @@ import '../../core/widgets/custom_snackbar.dart';
 import '../../core/widgets/error_dialog.dart';
 import '../../core/widgets/no_internet_dialog.dart';
 import '../../core/widgets/time_out_error_dialog.dart';
+import '../../main.dart';
 import '../screens/auth/sign_in_page.dart';
 
-import '../screens/intro_page/intro_page.dart';
 import '../screens/my_cart/my_cart.dart';
 
 class HomePageController extends ChangeNotifier {
@@ -36,13 +36,13 @@ class HomePageController extends ChangeNotifier {
   ValueNotifier<String?> _selectedFilter = ValueNotifier<String?>(null);
   bool _isFilterActive = false;
   int? userId;
-  String? userName;
+  String? _userName;
   String? _profileImage;
-  String? email;
-  String? state;
-  String? phone;
-  String? gender;
-  String? role;
+  String? _email;
+  String? _state;
+  String? _phone;
+  String? _gender;
+  String? _role;
   List<Map<String, dynamic>> products = [];
   bool _isLoading = false;
   late SharedPreferences prefs;
@@ -57,12 +57,21 @@ class HomePageController extends ChangeNotifier {
   String _userRole = "";
   String _url = "";
   bool _isMoved = false;
+  bool _isLoggedOut = false;
+  // late Future<void> _userData;
 
   HomePageController() {
     initialize();
   }
 
   //public getters
+  String? get userName => _userName;
+  String? get phone => _phone;
+  String? get email => _email;
+  String? get profileImage => _profileImage;
+  String? get state => _state;
+  String? get gender => _gender;
+  String? get role => _role;
   int get remainingTime => _remainingTime;
   bool get isSearching => _isSearching;
   bool get isLoading => _isLoading;
@@ -77,12 +86,23 @@ class HomePageController extends ChangeNotifier {
   int? get selectedRadioValue => _selectedRadioValue;
   String get userRole => _userRole;
   bool get isMoved => _isMoved;
+  bool get isLoggedOut => _isLoggedOut;
+  // Future<void> get userData => _userData;
 
   TextEditingController get searchController => _searchController;
   CarouselController get controller => _controller;
   ScrollController get scrollController => _scrollController;
 
   FocusNode get searchFocusNode => _searchFocusNode;
+
+  void refreshController() {
+    notifyListeners();
+  }
+
+  void setIsLoggedOut(bool value) {
+    _isLoggedOut = value;
+    notifyListeners();
+  }
 
   void setIsSearching(bool value) {
     _isSearching = value;
@@ -117,6 +137,7 @@ class HomePageController extends ChangeNotifier {
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
       if (result != ConnectivityResult.none) {
+        // _userData = fetchUserProfile();
         fetchUserProfile();
         if (products.isEmpty) {
           fetchProducts(overwrite: true);
@@ -126,6 +147,7 @@ class HomePageController extends ChangeNotifier {
     _remainingTime =
         11 * 3600 + 15 * 60 + 4; // Example: 11 hours, 15 minutes, 4 seconds
     _startTimer();
+    // _userData = fetchUserProfile();
     fetchUserProfile();
     fetchProducts(overwrite: true);
   }
@@ -264,11 +286,25 @@ class HomePageController extends ChangeNotifier {
   }
 
   Future<void> fetchUserProfile() async {
+    _isLoading = false;
+    notifyListeners();
+    final String? accessToken = await storage.read(
+        key: 'accessToken'); // Use the correct key for access token
+    if (accessToken == null) {
+      CustomSnackbar.show(
+        'You are not logged in.',
+        isError: true,
+      );
+      _isLoggedOut = true;
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
     if (_userRole == "Customer") {
       _url = "customer";
       notifyListeners();
     } else if (_userRole == "Vendor") {
-      _url = "vendor";
+      _url = "vendors";
       notifyListeners();
     } else if (_userRole == "Logistics") {
       _url = "logistics";
@@ -276,8 +312,6 @@ class HomePageController extends ChangeNotifier {
     }
     userId =
         await getUserId(); // Assuming this retrieves the userId from Flutter Secure Storage
-    final String? accessToken = await storage.read(
-        key: 'accessToken'); // Use the correct key for access token
     final url =
         'https://ojawa-api.onrender.com/api/Users/$_url/$userId'; // Update the URL to the correct endpoint
 
@@ -291,16 +325,18 @@ class HomePageController extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
+        _isLoggedOut = false;
+        notifyListeners();
         final responseData = json.decode(response.body);
 
         // Access the user data from the nested "data" key
         final userData = responseData['data'];
-        userName = userData['username'];
-        email = userData['email'];
-        state = userData['state'];
-        phone = userData['phone'];
-        gender = userData['gender'];
-        role = userData['role'];
+        _userName = userData['username'];
+        _email = userData['email'];
+        _state = userData['state'];
+        _phone = userData['phone'];
+        _gender = userData['gender'];
+        _role = userData['role'];
         final profilePictureUrl =
             userData['profilePictureUrl']?.toString().trim();
 
@@ -308,7 +344,7 @@ class HomePageController extends ChangeNotifier {
             (profilePictureUrl != null && profilePictureUrl.isNotEmpty)
                 ? '$profilePictureUrl/download?project=66e4476900275deffed4'
                 : '';
-        _isLoading = false; // Set loading to false after data is fetched
+        _isLoading = false;
         notifyListeners();
         print("Profile Loaded: ${response.body}");
         print("Profile Image URL: $_profileImage");
@@ -363,34 +399,53 @@ class HomePageController extends ChangeNotifier {
     }
   }
 
-  Future<void> logout(BuildContext context,
+  Future<void> logoutCall(BuildContext context,
       dynamic Function(bool) onToggleDarkMode, bool isDarkMode) async {
+    _isLoading = true;
+    notifyListeners();
+
+    logout(context, onToggleDarkMode, isDarkMode);
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  void logout(BuildContext context, dynamic Function(bool) onToggleDarkMode,
+      bool isDarkMode) async {
     final String? accessToken = await storage.read(key: 'accessToken');
     if (accessToken == null) {
+      Navigator.pop(navigatorKey.currentContext!);
       CustomSnackbar.show(
         'You are not logged in.',
         isError: true,
       );
-
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => SignInPage(
+      //         key: UniqueKey(),
+      //         onToggleDarkMode: onToggleDarkMode,
+      //         isDarkMode: isDarkMode),
+      //   ),
+      // );
+      _isLoggedOut = true;
       _isLoading = false;
       notifyListeners();
-      Navigator.pop(context);
       return;
     }
-
     await storage.delete(key: 'accessToken');
     // await prefs.remove('user');
 
-    Navigator.pushReplacement(
-      context,
+    Navigator.push(
+      navigatorKey.currentContext!,
       MaterialPageRoute(
-        builder: (context) => IntroPage(
+        builder: (context) => SignInPage(
             key: UniqueKey(),
             onToggleDarkMode: onToggleDarkMode,
             isDarkMode: isDarkMode),
       ),
     );
-
+    _isLoggedOut = true;
     _isLoading = false;
     notifyListeners();
   }
@@ -418,7 +473,7 @@ class HomePageController extends ChangeNotifier {
               isDarkMode: isDarkMode),
         ),
       );
-
+      _isLoggedOut = true;
       _isLoading = false;
       notifyListeners();
       return;
@@ -466,6 +521,7 @@ class HomePageController extends ChangeNotifier {
         Future.delayed(const Duration(seconds: 15), () {
           throw TimeoutException('The operation took too long.');
         }),
+        // _userData = fetchUserProfile();
         fetchUserProfile(),
         fetchProducts(overwrite: true),
       ]);
@@ -500,7 +556,7 @@ class HomePageController extends ChangeNotifier {
               isDarkMode: isDarkMode),
         ),
       );
-
+      _isLoggedOut = true;
       _isLoading = false;
       notifyListeners();
       return;

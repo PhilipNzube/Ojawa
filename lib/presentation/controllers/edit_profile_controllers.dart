@@ -6,6 +6,7 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/widgets/custom_snackbar.dart';
 
@@ -52,11 +53,13 @@ class EditProfileControllers extends ChangeNotifier {
   String? _gender;
   String? _role;
   bool _isLoading = false;
+  bool _isLoading2 = false;
   final ImagePicker _picker = ImagePicker();
   final double maxWidth = 360;
   final double maxHeight = 360;
   String _userRole = "";
   String _url = "";
+  late SharedPreferences prefs;
 
   EditProfileControllers() {
     initialize();
@@ -78,6 +81,7 @@ class EditProfileControllers extends ChangeNotifier {
   String? get gender => _gender;
   String? get role => _role;
   bool get isLoading => _isLoading;
+  bool get isLoading2 => _isLoading2;
   int? get selectedRadioValue => _selectedRadioValue;
   String? get phoneNumber => _phoneNumber;
 
@@ -116,7 +120,8 @@ class EditProfileControllers extends ChangeNotifier {
     notifyListeners();
   }
 
-  void initialize() {
+  void initialize() async {
+    await initializePrefs();
     fetchUserProfile();
   }
 
@@ -134,8 +139,17 @@ class EditProfileControllers extends ChangeNotifier {
     return null; // Return null if userId is not found or an error occurs
   }
 
+  Future<void> initializePrefs() async {
+    prefs = await SharedPreferences.getInstance();
+    String? savedRole = await storage.read(key: 'userRole');
+    if (savedRole != null) {
+      _userRole = savedRole;
+      notifyListeners();
+    }
+  }
+
   Future<void> fetchUserProfile() async {
-    _isLoading = false;
+    //_isLoading = true;
     notifyListeners();
     final String? accessToken = await storage.read(
         key: 'accessToken'); // Use the correct key for access token
@@ -144,7 +158,7 @@ class EditProfileControllers extends ChangeNotifier {
         'You are not logged in.',
         isError: true,
       );
-      _isLoading = false;
+      //_isLoading = false;
       notifyListeners();
       return;
     }
@@ -228,20 +242,20 @@ class EditProfileControllers extends ChangeNotifier {
             (profilePictureUrl != null && profilePictureUrl.isNotEmpty)
                 ? '$profilePictureUrl/download?project=66e4476900275deffed4'
                 : '';
-        _isLoading = false;
+        //_isLoading = false;
         notifyListeners();
         print("Profile Loaded: ${response.body}");
         print("Profile Image URL: $_profileImage");
       } else {
         print('Error fetching profile: ${response.statusCode}');
 
-        _isLoading = false; // Set loading to false on error
+        //_isLoading = false; // Set loading to false on error
         notifyListeners();
       }
     } catch (error) {
       print('Error: $error');
 
-      _isLoading = false; // Set loading to false on exception
+      //_isLoading = false; // Set loading to false on exception
       notifyListeners();
     }
   }

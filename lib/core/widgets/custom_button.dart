@@ -13,7 +13,7 @@ class CustomButton extends StatelessWidget {
 
   const CustomButton(
       {super.key,
-      this.isLoading,
+      this.isLoading = false,
       required this.text,
       this.bgColor = const Color(0xFF1D4ED8),
       this.fgColor = Colors.white,
@@ -64,7 +64,7 @@ class CustomButton extends StatelessWidget {
               },
             ),
           ),
-          child: isLoading != null || isLoading == true
+          child: isLoading == true
               ? const Center(
                   child: CircularProgressIndicator(
                     color: Colors.white,

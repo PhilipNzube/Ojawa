@@ -329,7 +329,7 @@ class _EditProfileLogisticsState extends State<EditProfileLogistics> {
                         const Gap(50),
                         CustomButton(
                           width: double.infinity,
-                          isLoading: editProfileController.isLoading,
+                          isLoading: editProfileController.isLoading2,
                           text: 'Update Profile',
                         ),
                         const Gap(10),

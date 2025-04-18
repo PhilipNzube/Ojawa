@@ -17,6 +17,7 @@ import '../../main.dart';
 import '../screens/main_app/main_app.dart';
 import '../screens/verify_email/verify_email.dart';
 import 'home_page_controller.dart';
+import 'navigation_controller.dart';
 
 class SignUpController extends ChangeNotifier {
   final FocusNode _fullNameFocusNode = FocusNode();
@@ -309,6 +310,9 @@ class SignUpController extends ChangeNotifier {
     print('Response Body: ${response.body}');
 
     if (response.statusCode == 200) {
+      Provider.of<NavigationController>(navigatorKey.currentContext!,
+              listen: false)
+          .setSelectedIndex(0);
       final String accessToken = responseData['token'];
       final int userId = responseData['value']; // Extract userId from response
 
@@ -336,9 +340,6 @@ class SignUpController extends ChangeNotifier {
       );
       isLoading = false;
       notifyListeners();
-      Provider.of<HomePageController>(navigatorKey.currentContext!,
-              listen: false)
-          .refreshController();
     } else if (response.statusCode == 400) {
       isLoading = false;
       notifyListeners();

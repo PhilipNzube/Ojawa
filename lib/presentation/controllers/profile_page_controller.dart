@@ -123,7 +123,7 @@ class ProfilePageController extends ChangeNotifier {
   }
 
   Future<void> fetchUserProfile() async {
-    _isLoading = false;
+    _isLoading = true;
     notifyListeners();
     final String? accessToken = await storage.read(
         key: 'accessToken'); // Use the correct key for access token
@@ -203,6 +203,8 @@ class ProfilePageController extends ChangeNotifier {
           notifyListeners();
         } else if (_userRole == "Logistics") {
           _fullName = userData['fullName'];
+          // _userName = userData['username'];
+          _userName = userData['fullName'];
           _email = userData['email'];
           _phone = userData['phone'];
           _walletBalance = userData['walletBalance'].toString();

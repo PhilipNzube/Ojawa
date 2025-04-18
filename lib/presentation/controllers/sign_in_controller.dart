@@ -9,6 +9,7 @@ import '../../core/widgets/custom_snackbar.dart';
 import '../../main.dart';
 import '../screens/main_app/main_app.dart';
 import 'home_page_controller.dart';
+import 'navigation_controller.dart';
 
 class SignInController extends ChangeNotifier {
   final FocusNode _userNameFocusNode = FocusNode();
@@ -139,6 +140,9 @@ class SignInController extends ChangeNotifier {
       print('Response Data: $responseData');
 
       if (response.statusCode == 200) {
+        Provider.of<NavigationController>(navigatorKey.currentContext!,
+                listen: false)
+            .setSelectedIndex(0);
         final Map<String, dynamic> responseData =
             json.decode(response.body); // Decode the response body
         final String accessToken = responseData['token'];

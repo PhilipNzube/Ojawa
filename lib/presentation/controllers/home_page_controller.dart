@@ -300,7 +300,7 @@ class HomePageController extends ChangeNotifier {
   }
 
   Future<void> fetchUserProfile() async {
-    _isLoading = false;
+    _isLoading = true;
     notifyListeners();
     final String? accessToken = await storage.read(
         key: 'accessToken'); // Use the correct key for access token

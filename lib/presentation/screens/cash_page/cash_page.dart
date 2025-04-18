@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/widgets/custom_gap.dart';
 import '../../../core/widgets/tab.dart';
+import '../../../main.dart';
 import '../../controllers/cash_page_controller.dart';
 import '../../../core/widgets/wallet_card.dart';
 import '../../controllers/home_page_controller.dart';
@@ -17,7 +18,6 @@ class CashPage extends StatefulWidget {
 class _CashPageState extends State<CashPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
-    final homePageController = Provider.of<HomePageController>(context);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return ChangeNotifierProvider(
       create: (context) => CashPageController(vsync: this),
@@ -112,7 +112,11 @@ class _CashPageState extends State<CashPage> with TickerProviderStateMixin {
                                         ),
                                         const Gap(2, isHorizontal: true),
                                         Text(
-                                          homePageController.walletBalance ??
+                                          Provider.of<HomePageController>(
+                                                      navigatorKey
+                                                          .currentContext!,
+                                                      listen: false)
+                                                  .walletBalance ??
                                               '0.0',
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(

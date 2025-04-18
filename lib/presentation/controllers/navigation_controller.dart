@@ -9,6 +9,11 @@ class NavigationController extends ChangeNotifier {
 
   int get selectedIndex => _selectedIndex;
 
+  void setSelectedIndex(int value) {
+    _selectedIndex = value;
+    notifyListeners();
+  }
+
   void changeTab(
       int index,
       BuildContext context,

@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ExchangeOrderController()),
         ChangeNotifierProvider(create: (_) => ExchangeOrder2Controller()),
         ChangeNotifierProvider(create: (_) => FaqPageController()),
-        ChangeNotifierProvider(create: (_) => HomePageController()),
+        //ChangeNotifierProvider(create: (_) => HomePageController()),
         ChangeNotifierProvider(create: (_) => MyCartController()),
         ChangeNotifierProvider(create: (_) => NewAccountController()),
         ChangeNotifierProvider(create: (_) => NewAddressController()),

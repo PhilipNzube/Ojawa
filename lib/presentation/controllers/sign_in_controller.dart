@@ -123,70 +123,77 @@ class SignInController extends ChangeNotifier {
 
     _isLoading = true;
     notifyListeners();
-
-    // Send the POST request
-    final response = await http.post(
-      Uri.parse('https://ojawa-api.onrender.com/api/Auth/$_url'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'username': userName,
-        'password': password,
-      }),
-    );
-
-    final responseData = json.decode(response.body);
-
-    print('Response Data: $responseData');
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> responseData =
-          json.decode(response.body); // Decode the response body
-      final String accessToken = responseData['token'];
-      final int userId = responseData['userId']; // Extract userId from response
-
-      await prefs.setString('userName', userName);
-      await storage.write(key: 'userRole', value: _selectedRole);
-      await storage.write(key: 'accessToken', value: accessToken);
-      await storage.write(key: 'userId', value: userId.toString());
-
-      // Handle the successful response here
-      CustomSnackbar.show(
-        'Sign in successful!',
-        isError: false,
+    try {
+      // Send the POST request
+      final response = await http.post(
+        Uri.parse('https://ojawa-api.onrender.com/api/Auth/$_url'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'username': userName,
+          'password': password,
+        }),
       );
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MainApp(
-              key: UniqueKey(),
-              onToggleDarkMode: onToggleDarkMode,
-              isDarkMode: isDarkMode),
-        ),
-      );
-      _isLoading = false;
-      notifyListeners();
-      Provider.of<HomePageController>(navigatorKey.currentContext!,
-              listen: false)
-          .refreshController();
-    } else if (response.statusCode == 400) {
-      _isLoading = false;
-      notifyListeners();
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      final String error = responseData['message'];
+      final responseData = json.decode(response.body);
 
+      print('Response Data: $responseData');
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData =
+            json.decode(response.body); // Decode the response body
+        final String accessToken = responseData['token'];
+        final int userId =
+            responseData['userId']; // Extract userId from response
+
+        await prefs.setString('userName', userName);
+        await storage.write(key: 'userRole', value: _selectedRole);
+        await storage.write(key: 'accessToken', value: accessToken);
+        await storage.write(key: 'userId', value: userId.toString());
+
+        // Handle the successful response here
+        CustomSnackbar.show(
+          'Sign in successful!',
+          isError: false,
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MainApp(
+                key: UniqueKey(),
+                onToggleDarkMode: onToggleDarkMode,
+                isDarkMode: isDarkMode),
+          ),
+        );
+        _isLoading = false;
+        notifyListeners();
+      } else if (response.statusCode == 400) {
+        _isLoading = false;
+        notifyListeners();
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final String error = responseData['message'];
+
+        CustomSnackbar.show(
+          'Error: $error',
+          isError: true,
+        );
+      } else {
+        _isLoading = false;
+        notifyListeners();
+
+        CustomSnackbar.show(
+          'An unexpected error occurred.',
+          isError: true,
+        );
+      }
+    } catch (error) {
+      print('Error: $error');
       CustomSnackbar.show(
-        'Error: $error',
+        'An unexpected error occurred. Check if the right login details were inputted',
         isError: true,
       );
-    } else {
       _isLoading = false;
       notifyListeners();
-
-      CustomSnackbar.show(
-        'An unexpected error occurred.',
-        isError: true,
-      );
     }
   }
 }

@@ -219,7 +219,9 @@ class _ProfilePageVendorState extends State<ProfilePageVendor> {
                                                           isHorizontal: true),
                                                       Flexible(
                                                         child: Text(
-                                                          '6,000.00',
+                                                          profilePageController
+                                                                  .walletBalance ??
+                                                              '0.0',
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           style: TextStyle(

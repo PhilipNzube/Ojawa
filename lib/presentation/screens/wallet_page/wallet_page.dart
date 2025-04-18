@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_gap.dart';
 import '../../../core/widgets/tab.dart';
+import '../../controllers/home_page_controller.dart';
 import '../../controllers/wallet_page_controller.dart';
 import '../../../core/widgets/wallet_card.dart';
 
@@ -18,6 +19,7 @@ class _WalletPageState extends State<WalletPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final homePageController = Provider.of<HomePageController>(context);
     //final walletPageController = Provider.of<WalletPageController>(context);
     return ChangeNotifierProvider(
       create: (context) => WalletPageController(vsync: this),
@@ -112,7 +114,8 @@ class _WalletPageState extends State<WalletPage> with TickerProviderStateMixin {
                                         ),
                                         const Gap(2, isHorizontal: true),
                                         Text(
-                                          "6,000,000.00",
+                                          homePageController.walletBalance ??
+                                              '0.0',
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             fontFamily: 'Poppins',

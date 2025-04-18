@@ -7,6 +7,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+import '../../core/widgets/custom_snackbar.dart';
+
 class EditProfileControllers extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
   int? _selectedRadioValue = 1;
@@ -35,24 +37,46 @@ class EditProfileControllers extends ChangeNotifier {
   final FocusNode _taxNumberFocusNode = FocusNode();
   String _phoneNumber = '';
   int? userId;
+  String? _fullName;
+  String? _userName;
   String? _profileImage;
-  String? userName;
-  String? email;
-  String? state;
-  String? phone;
-  String? gender;
-  String? role;
+  String? _email;
+  String? _address;
+  String? _city;
+  String? _state;
+  String? _storeName;
+  String? _storeWebsiteUrl;
+  String? _storeDescription;
+  String? _walletBalance;
+  String? _phone;
+  String? _gender;
+  String? _role;
   bool _isLoading = false;
   final ImagePicker _picker = ImagePicker();
   final double maxWidth = 360;
   final double maxHeight = 360;
+  String _userRole = "";
+  String _url = "";
 
   EditProfileControllers() {
     initialize();
   }
 
   //public getters
+  String? get fullName => _fullName;
+  String? get userName => _userName;
+  String? get phone => _phone;
+  String? get email => _email;
   String? get profileImage => _profileImage;
+  String? get address => _address;
+  String? get city => _city;
+  String? get state => _state;
+  String? get storeName => _storeName;
+  String? get storeWebsiteUrl => _storeWebsiteUrl;
+  String? get storeDescription => _storeDescription;
+  String? get walletBalance => _walletBalance;
+  String? get gender => _gender;
+  String? get role => _role;
   bool get isLoading => _isLoading;
   int? get selectedRadioValue => _selectedRadioValue;
   String? get phoneNumber => _phoneNumber;
@@ -111,34 +135,92 @@ class EditProfileControllers extends ChangeNotifier {
   }
 
   Future<void> fetchUserProfile() async {
-    // Retrieve the userId from storage
-    userId =
-        await getUserId(); // Assuming this retrieves the userId from Flutter Secure Storage
+    _isLoading = false;
+    notifyListeners();
     final String? accessToken = await storage.read(
         key: 'accessToken'); // Use the correct key for access token
+    if (accessToken == null) {
+      CustomSnackbar.show(
+        'You are not logged in.',
+        isError: true,
+      );
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
+    if (_userRole == "Customer") {
+      _url = "customer";
+      notifyListeners();
+    } else if (_userRole == "Vendor") {
+      _url = "vendors";
+      notifyListeners();
+    } else if (_userRole == "Logistics") {
+      _url = "logistics";
+      notifyListeners();
+    }
+    userId =
+        await getUserId(); // Assuming this retrieves the userId from Flutter Secure Storage
     final url =
-        'https://ojawa-api.onrender.com/api/Users/$userId'; // Update the URL to the correct endpoint
+        'https://ojawa-api.onrender.com/api/Users/$_url/$userId'; // Update the URL to the correct endpoint
 
     try {
       final response = await http.get(
         Uri.parse(url),
         headers: {
+          'Accept': 'text/plain',
           'Authorization': 'Bearer $accessToken',
-          'Content-Type': 'application/json',
         },
       );
 
       if (response.statusCode == 200) {
+        notifyListeners();
         final responseData = json.decode(response.body);
 
         // Access the user data from the nested "data" key
         final userData = responseData['data'];
-        userName = userData['username'];
-        email = userData['email'];
-        state = userData['state'];
-        phone = userData['phone'];
-        gender = userData['gender'];
-        role = userData['role'];
+        if (_userRole == "Customer") {
+          _userName = userData['username'];
+          _email = userData['email'];
+          _state = userData['state'];
+          _phone = userData['phone'];
+          _gender = userData['gender'];
+
+          _nameController.text = userName ?? '';
+          _emailController.text = email ?? '';
+          _phoneController.text = phone ?? '';
+          _locationController.text = state ?? '';
+
+          if (gender != null) {
+            if (gender!.toLowerCase() == 'male') {
+              _selectedRadioValue = 1;
+            } else if (gender!.toLowerCase() == 'female') {
+              _selectedRadioValue = 2;
+            } else {
+              _selectedRadioValue = 3; // Other
+            }
+          }
+          notifyListeners();
+        } else if (_userRole == "Vendor") {
+          _fullName = userData['fullName'];
+          _userName = userData['username'];
+          _email = userData['email'];
+          _phone = userData['phone'];
+          _address = userData['address'];
+          _city = userData['city'];
+          _state = userData['state'];
+          _storeName = userData['storeName'];
+          _storeWebsiteUrl = userData['storeWebsiteUrl'];
+          _storeDescription = userData['storeDescription'];
+          _walletBalance = userData['walletBalance'].toString();
+          notifyListeners();
+        } else if (_userRole == "Logistics") {
+          _fullName = userData['fullName'];
+          _email = userData['email'];
+          _phone = userData['phone'];
+          _walletBalance = userData['walletBalance'].toString();
+          notifyListeners();
+        }
+        _role = userData['role'];
         final profilePictureUrl =
             userData['profilePictureUrl']?.toString().trim();
 
@@ -146,26 +228,7 @@ class EditProfileControllers extends ChangeNotifier {
             (profilePictureUrl != null && profilePictureUrl.isNotEmpty)
                 ? '$profilePictureUrl/download?project=66e4476900275deffed4'
                 : '';
-
-        // Set the values of the TextEditingControllers
-        _nameController.text = userName ?? '';
-        _emailController.text = email ?? '';
-        _phoneController.text = phone ?? '';
-        _locationController.text =
-            state ?? ''; // Assuming state is used for location
-
-        // Set the selected gender based on the response
-        if (gender != null) {
-          if (gender!.toLowerCase() == 'male') {
-            _selectedRadioValue = 1;
-          } else if (gender!.toLowerCase() == 'female') {
-            _selectedRadioValue = 2;
-          } else {
-            _selectedRadioValue = 3; // Other
-          }
-        }
-
-        _isLoading = false; // Set loading to false after data is fetched
+        _isLoading = false;
         notifyListeners();
         print("Profile Loaded: ${response.body}");
         print("Profile Image URL: $_profileImage");

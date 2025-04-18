@@ -307,7 +307,7 @@ class _ProfilePageCustomerState extends State<ProfilePageCustomer> {
                                                         isHorizontal: true),
                                                     Flexible(
                                                       child: Text(
-                                                        '00.00',
+                                                        '0.0',
                                                         overflow: TextOverflow
                                                             .ellipsis,
                                                         style: TextStyle(

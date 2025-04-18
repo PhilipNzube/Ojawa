@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_gap.dart';
+import '../../controllers/home_page_controller.dart';
 import '../../controllers/wallet_history_controllers.dart';
 import 'widgets/history_cards.dart';
 
@@ -17,6 +18,7 @@ class _WalletHistoryState extends State<WalletHistory> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final homePageController = Provider.of<HomePageController>(context);
     final walletHistoryController =
         Provider.of<WalletHistoryControllers>(context);
     return Scaffold(
@@ -108,7 +110,7 @@ class _WalletHistoryState extends State<WalletHistory> {
                                     ),
                                     const Gap(2, isHorizontal: true),
                                     Text(
-                                      "6,000,000.00",
+                                      homePageController.walletBalance ?? '0.0',
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontFamily: 'Poppins',

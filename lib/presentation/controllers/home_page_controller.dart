@@ -36,10 +36,17 @@ class HomePageController extends ChangeNotifier {
   ValueNotifier<String?> _selectedFilter = ValueNotifier<String?>(null);
   bool _isFilterActive = false;
   int? userId;
+  String? _fullName;
   String? _userName;
   String? _profileImage;
   String? _email;
+  String? _address;
+  String? _city;
   String? _state;
+  String? _storeName;
+  String? _storeWebsiteUrl;
+  String? _storeDescription;
+  String? _walletBalance;
   String? _phone;
   String? _gender;
   String? _role;
@@ -65,11 +72,18 @@ class HomePageController extends ChangeNotifier {
   }
 
   //public getters
+  String? get fullName => _fullName;
   String? get userName => _userName;
   String? get phone => _phone;
   String? get email => _email;
   String? get profileImage => _profileImage;
+  String? get address => _address;
+  String? get city => _city;
   String? get state => _state;
+  String? get storeName => _storeName;
+  String? get storeWebsiteUrl => _storeWebsiteUrl;
+  String? get storeDescription => _storeDescription;
+  String? get walletBalance => _walletBalance;
   String? get gender => _gender;
   String? get role => _role;
   int get remainingTime => _remainingTime;
@@ -331,11 +345,33 @@ class HomePageController extends ChangeNotifier {
 
         // Access the user data from the nested "data" key
         final userData = responseData['data'];
-        _userName = userData['username'];
-        _email = userData['email'];
-        _state = userData['state'];
-        _phone = userData['phone'];
-        _gender = userData['gender'];
+        if (_userRole == "Customer") {
+          _userName = userData['username'];
+          _email = userData['email'];
+          _state = userData['state'];
+          _phone = userData['phone'];
+          _gender = userData['gender'];
+          notifyListeners();
+        } else if (_userRole == "Vendor") {
+          _fullName = userData['fullName'];
+          _userName = userData['username'];
+          _email = userData['email'];
+          _phone = userData['phone'];
+          _address = userData['address'];
+          _city = userData['city'];
+          _state = userData['state'];
+          _storeName = userData['storeName'];
+          _storeWebsiteUrl = userData['storeWebsiteUrl'];
+          _storeDescription = userData['storeDescription'];
+          _walletBalance = userData['walletBalance'].toString();
+          notifyListeners();
+        } else if (_userRole == "Logistics") {
+          _fullName = userData['fullName'];
+          _email = userData['email'];
+          _phone = userData['phone'];
+          _walletBalance = userData['walletBalance'].toString();
+          notifyListeners();
+        }
         _role = userData['role'];
         final profilePictureUrl =
             userData['profilePictureUrl']?.toString().trim();

@@ -216,6 +216,7 @@ class _SignInPageState extends State<SignInPage> with WidgetsBindingObserver {
                         onTap: () {
                           signUpController.resetSelectedRole();
                           signInController.setIsLoading(false);
+                          signUpController.setIsLoading(false);
                           Navigator.push(
                             context,
                             MaterialPageRoute(

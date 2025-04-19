@@ -56,7 +56,7 @@ class SignUpController extends ChangeNotifier {
 
   final storage = const FlutterSecureStorage();
   late SharedPreferences prefs;
-  bool isLoading = false;
+  bool _isLoading = false;
   String phoneNumber = '';
   String localPhoneNumber = '';
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -77,6 +77,7 @@ class SignUpController extends ChangeNotifier {
   GlobalKey<FormState> get formKey => _formKey;
   String get profileImage => _profileImage;
   String get selectedRole => _selectedRole;
+  bool get isLoading => _isLoading;
 
   FocusNode get fullNameFocusNode => _fullNameFocusNode;
   FocusNode get userNameFocusNode => _userNameFocusNode;
@@ -104,6 +105,11 @@ class SignUpController extends ChangeNotifier {
   TextEditingController get passwordController => _passwordController;
   TextEditingController get password2Controller => _password2Controller;
   TextEditingController get roleController => _roleController;
+
+  void setIsLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
 
   void resetSelectedRole() {
     _selectedRole = 'Select Role';
@@ -245,7 +251,7 @@ class SignUpController extends ChangeNotifier {
     //   return;
     // }
 
-    isLoading = true;
+    _isLoading = true;
     notifyListeners();
 
     final url = Uri.parse('https://ojawa-api.onrender.com/api/Auth/$_url');
@@ -338,10 +344,10 @@ class SignUpController extends ChangeNotifier {
               isDarkMode: isDarkMode),
         ),
       );
-      isLoading = false;
+      _isLoading = false;
       notifyListeners();
     } else if (response.statusCode == 400) {
-      isLoading = false;
+      _isLoading = false;
       notifyListeners();
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       final String error = responseData['message'];
@@ -368,7 +374,7 @@ class SignUpController extends ChangeNotifier {
         );
       }
     } else {
-      isLoading = false;
+      _isLoading = false;
       notifyListeners();
       // Handle other unexpected responses
       CustomSnackbar.show(

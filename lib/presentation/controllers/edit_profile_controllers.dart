@@ -154,10 +154,12 @@ class EditProfileControllers extends ChangeNotifier {
     final String? accessToken = await storage.read(
         key: 'accessToken'); // Use the correct key for access token
     if (accessToken == null) {
+/*
       CustomSnackbar.show(
         'You are not logged in.',
         isError: true,
       );
+*/
       //_isLoading = false;
       notifyListeners();
       return;

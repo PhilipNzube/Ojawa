@@ -15,6 +15,7 @@ import '../../core/widgets/time_out_error_dialog.dart';
 import '../../main.dart';
 import '../screens/auth/sign_in_page.dart';
 
+import '../screens/intro_page/intro_page.dart';
 import '../screens/my_cart/my_cart.dart';
 
 class HomePageController extends ChangeNotifier {
@@ -469,7 +470,10 @@ class HomePageController extends ChangeNotifier {
       notifyListeners();
       return;
     }
+    await storage.delete(key: 'userRole');
     await storage.delete(key: 'accessToken');
+    await storage.delete(key: 'userId');
+    await prefs.remove('userName');
     // await prefs.remove('user');
 
     Navigator.push(
@@ -603,5 +607,48 @@ class HomePageController extends ChangeNotifier {
         builder: (context) => MyCart(key: UniqueKey()),
       ),
     );
+  }
+
+  void switchRoleToCustomer(BuildContext context,
+      dynamic Function(bool) onToggleDarkMode, bool isDarkMode) async {
+    final String? accessToken = await storage.read(key: 'accessToken');
+    if (accessToken == null) {
+      Navigator.pop(navigatorKey.currentContext!);
+      CustomSnackbar.show(
+        'You are not logged in.',
+        isError: true,
+      );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => SignInPage(
+      //         key: UniqueKey(),
+      //         onToggleDarkMode: onToggleDarkMode,
+      //         isDarkMode: isDarkMode),
+      //   ),
+      // );
+      _isLoggedOut = true;
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
+    await storage.delete(key: 'userRole');
+    await storage.delete(key: 'accessToken');
+    await storage.delete(key: 'userId');
+    await prefs.remove('userName');
+    // await prefs.remove('user');
+
+    Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+        builder: (context) => IntroPage(
+            key: UniqueKey(),
+            onToggleDarkMode: onToggleDarkMode,
+            isDarkMode: isDarkMode),
+      ),
+    );
+    _isLoggedOut = true;
+    _isLoading = false;
+    notifyListeners();
   }
 }

@@ -272,7 +272,10 @@ class ProfilePageController extends ChangeNotifier {
       return;
     }
     _isLoading = true;
+    await storage.delete(key: 'userRole');
     await storage.delete(key: 'accessToken');
+    await storage.delete(key: 'userId');
+    await prefs.remove('userName');
     // await prefs.remove('user');
 
     Navigator.push(

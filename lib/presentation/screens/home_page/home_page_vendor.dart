@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/widgets/custom_error_message.dart';
 import '../../../core/widgets/product.dart';
+import '../../../core/widgets/role_switcher_fab.dart';
 import '../../controllers/home_page_controller.dart';
 import '../top_categories_details/top_categories_details.dart';
 import 'widgets/bottom_sheets/sort_by_sheet.dart';
@@ -913,6 +914,9 @@ class _HomePageVendorState extends State<HomePageVendor>
                     ),
                   ),
                 ),
+              RoleSwitcherFab(
+                onPressed: homePageController.switchRoleToCustomer,
+              ),
             ],
           ),
         );

@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/widgets/custom_snackbar.dart';
 import '../../main.dart';
@@ -16,6 +17,7 @@ class MainAppControllers extends ChangeNotifier {
   final List<bool> _hasNotification = [false, false, false, false];
   DateTime? currentBackPressTime;
   final storage = const FlutterSecureStorage();
+  late SharedPreferences prefs;
   int? _userId;
   String? _userName;
   String? _profileImage;
@@ -240,7 +242,10 @@ class MainAppControllers extends ChangeNotifier {
       notifyListeners();
       return;
     }
+    await storage.delete(key: 'userRole');
     await storage.delete(key: 'accessToken');
+    await storage.delete(key: 'userId');
+    await prefs.remove('userName');
     // await prefs.remove('user');
 
     Navigator.push(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide CarouselController;
 import 'package:provider/provider.dart';
 
 import '../../../core/widgets/custom_bg.dart';
+import '../../../core/widgets/role_switcher_fab.dart';
 import '../../controllers/home_page_controller.dart';
 import 'widgets/bottom_sheets/sort_by_sheet.dart';
 import '../../../core/widgets/filter_widget.dart';
@@ -502,6 +503,9 @@ class _HomePageLogisticsState extends State<HomePageLogistics>
                     ),
                   ),
                 ),
+              RoleSwitcherFab(
+                onPressed: homePageController.switchRoleToCustomer,
+              ),
             ],
           ),
         );

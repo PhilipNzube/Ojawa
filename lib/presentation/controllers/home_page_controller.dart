@@ -609,29 +609,8 @@ class HomePageController extends ChangeNotifier {
     );
   }
 
-  void switchRoleToCustomer(BuildContext context,
+  void switchRoleToCustomer(
       dynamic Function(bool) onToggleDarkMode, bool isDarkMode) async {
-    final String? accessToken = await storage.read(key: 'accessToken');
-    if (accessToken == null) {
-      Navigator.pop(navigatorKey.currentContext!);
-      CustomSnackbar.show(
-        'You are not logged in.',
-        isError: true,
-      );
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => SignInPage(
-      //         key: UniqueKey(),
-      //         onToggleDarkMode: onToggleDarkMode,
-      //         isDarkMode: isDarkMode),
-      //   ),
-      // );
-      _isLoggedOut = true;
-      _isLoading = false;
-      notifyListeners();
-      return;
-    }
     await storage.delete(key: 'userRole');
     await storage.delete(key: 'accessToken');
     await storage.delete(key: 'userId');
@@ -647,8 +626,17 @@ class HomePageController extends ChangeNotifier {
             isDarkMode: isDarkMode),
       ),
     );
+    CustomSnackbar.show(
+      'Now browsing as a customer. Some features require signup.',
+    );
     _isLoggedOut = true;
     _isLoading = false;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose;
   }
 }

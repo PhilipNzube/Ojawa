@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' hide CarouselController;
+import 'package:ojawa/main.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/widgets/custom_error_message.dart';
@@ -915,7 +916,12 @@ class _HomePageVendorState extends State<HomePageVendor>
                   ),
                 ),
               RoleSwitcherFab(
-                onPressed: homePageController.switchRoleToCustomer,
+                onPressed: () {
+                  Provider.of<HomePageController>(navigatorKey.currentContext!,
+                          listen: false)
+                      .switchRoleToCustomer(
+                          widget.onToggleDarkMode, widget.isDarkMode);
+                },
               ),
             ],
           ),

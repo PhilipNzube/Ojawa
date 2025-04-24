@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../presentation/controllers/home_page_controller.dart';
 import 'custom_snackbar.dart';
 
 class RoleSwitcherFab extends StatefulWidget {
-  final void Function(BuildContext, dynamic Function(bool), bool)? onPressed;
+  final void Function()? onPressed;
 
   const RoleSwitcherFab({
     super.key,
@@ -21,6 +23,14 @@ class _RoleSwitcherFabState extends State<RoleSwitcherFab> {
   final GlobalKey<TooltipState> _tooltipKey = GlobalKey<TooltipState>();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _tooltipKey.currentState?.ensureTooltipVisible();
+    });
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
@@ -29,10 +39,7 @@ class _RoleSwitcherFabState extends State<RoleSwitcherFab> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     setState(() {
-      _fabPosition = Offset(
-          screenWidth - 76,
-          screenHeight -
-              136); // 76 and 136 are offsets for padding and FAB size
+      _fabPosition = Offset(screenWidth - 86, screenHeight - 236);
     });
   }
 
@@ -64,21 +71,8 @@ class _RoleSwitcherFabState extends State<RoleSwitcherFab> {
             mainAxisSize: MainAxisSize.min,
             children: [
               FloatingActionButton(
-                onPressed: isLoading
-                    ? null
-                    : () async {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        widget.onPressed;
-                        setState(() {
-                          isLoading = false;
-                        });
-                        CustomSnackbar.show(
-                          'Now browsing as a customer. Some features require signup.',
-                        );
-                      },
-                backgroundColor: Colors.black,
+                onPressed: isLoading ? null : widget.onPressed,
+                backgroundColor: const Color.fromARGB(123, 0, 0, 0),
                 child: isLoading
                     ? const CircularProgressIndicator(
                         color: Colors.white,
@@ -88,8 +82,21 @@ class _RoleSwitcherFabState extends State<RoleSwitcherFab> {
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.005),
               const Text(
-                'Browse as Customer',
+                'Browse as',
                 textAlign: TextAlign.center,
+                softWrap: true,
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12.0,
+                  color: Colors.black,
+                ),
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+              const Text(
+                'Customer',
+                textAlign: TextAlign.center,
+                softWrap: true,
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontWeight: FontWeight.bold,

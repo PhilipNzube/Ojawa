@@ -351,7 +351,7 @@ class SignUpController extends ChangeNotifier {
       notifyListeners();
       // Handle other unexpected responses
       CustomSnackbar.show(
-        'An unexpected error occurred.',
+        'Error: ${responseData['message']}',
         isError: true,
       );
     }

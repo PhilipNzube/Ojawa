@@ -322,7 +322,7 @@ class EditProfileControllers extends ChangeNotifier {
         throw Exception("No access token found.");
       }
 
-      final response = await http.post(
+      final response = await http.patch(
         Uri.parse('https://dev-server.ojawa.africa/api/v1/auth/update-profile'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({

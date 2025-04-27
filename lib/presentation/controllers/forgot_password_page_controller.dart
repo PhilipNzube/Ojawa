@@ -76,15 +76,17 @@ class ForgotPasswordPageController extends ChangeNotifier {
       body: jsonEncode({'email': email}),
     );
 
+    print('Response Status: ${response.statusCode}');
+    print('Response Body: ${response.body}');
     if (response.statusCode == 200) {
       CustomSnackbar.show(
         'Reset link sent successfully.',
         isError: false,
       );
     } else {
-      final responseBody = response.body;
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
       CustomSnackbar.show(
-        'Error: $responseBody',
+        'Error: ${responseData['message']}',
         isError: true,
       );
     }
@@ -153,7 +155,8 @@ class ForgotPasswordPageController extends ChangeNotifier {
         //'password_confirmation': passwordConfirmation,
       }),
     );
-
+    print('Response Status: ${response.statusCode}');
+    print('Response Body: ${response.body}');
     if (response.statusCode == 200) {
       CustomSnackbar.show(
         'Password reset successful.',
@@ -172,7 +175,7 @@ class ForgotPasswordPageController extends ChangeNotifier {
     } else {
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       CustomSnackbar.show(
-        'Error: ${responseData['error']}',
+        'Error: ${responseData['message']}',
         isError: true,
       );
     }

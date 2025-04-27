@@ -187,11 +187,12 @@ class SignInController extends ChangeNotifier {
           isError: true,
         );
       } else {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
         _isLoading = false;
         notifyListeners();
 
         CustomSnackbar.show(
-          'An unexpected error occurred.',
+          'Error: ${responseData['message']}',
           isError: true,
         );
       }

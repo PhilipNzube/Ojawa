@@ -120,34 +120,38 @@ class _SignUpPageState extends State<SignUpPage> with WidgetsBindingObserver {
                           SizedBox(
                               height:
                                   MediaQuery.of(context).size.height * 0.05),
-
-                          const AuthLabel(title: 'Firstname'),
-                          const Gap(5),
-                          CustomTextField(
-                            controller: signUpController.firstNameController,
-                            focusNode: signUpController.firstNameFocusNode,
-                            validator: (value) => value!.isEmpty
-                                ? 'Please enter firstname'
-                                : null,
-                          ),
-                          SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.02),
-
-                          const AuthLabel(title: 'Lastname'),
-                          const Gap(5),
-                          CustomTextField(
-                            controller: signUpController.lastNameController,
-                            focusNode: signUpController.lastNameFocusNode,
-                            validator: (value) =>
-                                value!.isEmpty ? 'Please enter lastname' : null,
-                          ),
-                          SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.02),
-
+                          if (signUpController.selectedRole == "Vendor" ||
+                              signUpController.selectedRole == "Logistics") ...[
+                            const AuthLabel(title: 'Fullname'),
+                            const Gap(5),
+                            CustomTextField(
+                              controller: signUpController.fullNameController,
+                              focusNode: signUpController.fullNameFocusNode,
+                              validator: (value) => value!.isEmpty
+                                  ? 'Please enter fullname'
+                                  : null,
+                            ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02),
+                          ],
+                          if (signUpController.selectedRole == "Customer" ||
+                              signUpController.selectedRole == "Vendor") ...[
+                            const AuthLabel(title: 'Username'),
+                            const Gap(5),
+                            CustomTextField(
+                              controller: signUpController.userNameController,
+                              focusNode: signUpController.userNameFocusNode,
+                              validator: (value) => value!.isEmpty
+                                  ? 'Please enter username'
+                                  : null,
+                            ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02),
+                          ],
                           const AuthLabel(title: 'Email'),
-                          const Gap(5),
+                          const Gap(5), const Gap(5),
                           CustomTextField(
                             label: 'example@gmail.com',
                             controller: signUpController.emailController,
@@ -212,11 +216,157 @@ class _SignUpPageState extends State<SignUpPage> with WidgetsBindingObserver {
                               ),
                             ),
                           ),
-
                           SizedBox(
                               height:
                                   MediaQuery.of(context).size.height * 0.02),
-
+                          if (signUpController.selectedRole == "Customer") ...[
+                            const AuthLabel(title: 'Gender'),
+                            const Gap(5),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: isDarkMode
+                                      ? Colors.grey[900]
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(
+                                      5), // Smoother corners
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      spreadRadius: 2,
+                                      blurRadius: 8,
+                                      offset: const Offset(
+                                          0, 2), // Position shadow for depth
+                                    ),
+                                  ],
+                                ),
+                                child: DropdownButtonFormField<String>(
+                                  value: signUpController.selectedGender,
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      signUpController.selectedGender =
+                                          newValue!;
+                                    });
+                                  },
+                                  items: <String>['Male', 'Female', 'Other']
+                                      .map<DropdownMenuItem<String>>(
+                                          (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(
+                                        value,
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontSize: 16.0,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.all(8),
+                                    border: InputBorder.none,
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                      borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02),
+                          ],
+                          if (signUpController.selectedRole == "Vendor") ...[
+                            const AuthLabel(title: 'Address'),
+                            const Gap(5),
+                            CustomTextField(
+                              controller: signUpController.addressController,
+                              focusNode: signUpController.addressFocusNode,
+                              validator: (value) => value!.isEmpty
+                                  ? 'Please enter address'
+                                  : null,
+                            ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02),
+                            const AuthLabel(title: 'City'),
+                            const Gap(5),
+                            CustomTextField(
+                              controller: signUpController.cityController,
+                              focusNode: signUpController.cityFocusNode,
+                              validator: (value) =>
+                                  value!.isEmpty ? 'Please enter city' : null,
+                            ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02),
+                          ],
+                          if (signUpController.selectedRole == "Customer" ||
+                              signUpController.selectedRole == "Vendor") ...[
+                            const AuthLabel(title: 'State'),
+                            const Gap(5),
+                            CustomTextField(
+                              controller: signUpController.stateController,
+                              focusNode: signUpController.stateFocusNode,
+                              validator: (value) =>
+                                  value!.isEmpty ? 'Please enter state' : null,
+                            ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02),
+                          ],
+                          if (signUpController.selectedRole == "Vendor") ...[
+                            const AuthLabel(title: 'Store Name'),
+                            const Gap(5),
+                            CustomTextField(
+                              controller: signUpController.storeNameController,
+                              focusNode: signUpController.storeNameFocusNode,
+                              validator: (value) => value!.isEmpty
+                                  ? 'Please enter store name'
+                                  : null,
+                            ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02),
+                            const AuthLabel(title: 'Store Website Url'),
+                            const Gap(5),
+                            CustomTextField(
+                              controller:
+                                  signUpController.storeWebsiteUrlController,
+                              focusNode:
+                                  signUpController.storeWebsiteUrlFocusNode,
+                              validator: (value) => value!.isEmpty
+                                  ? 'Please enter store website url'
+                                  : null,
+                            ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02),
+                            const AuthLabel(title: 'Store Description'),
+                            const Gap(5),
+                            CustomTextField(
+                              controller:
+                                  signUpController.storeDescriptioController,
+                              focusNode:
+                                  signUpController.storeDescriptionFocusNode,
+                              validator: (value) => value!.isEmpty
+                                  ? 'Please enter store description'
+                                  : null,
+                            ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02),
+                          ],
                           const AuthLabel(title: 'New Password'),
                           const Gap(5),
                           AuthPasswordField(

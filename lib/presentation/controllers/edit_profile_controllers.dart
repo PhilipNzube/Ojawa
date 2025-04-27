@@ -5,16 +5,20 @@ import 'package:http/http.dart' as http;
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/widgets/custom_snackbar.dart';
+import '../../main.dart';
+import 'home_page_controller.dart';
 
 class EditProfileControllers extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
   int? _selectedRadioValue = 1;
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final FocusNode _nameFocusNode = FocusNode();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
@@ -25,6 +29,10 @@ class EditProfileControllers extends ChangeNotifier {
   final TextEditingController _longitudeController = TextEditingController();
   final TextEditingController _taxNameController = TextEditingController();
   final TextEditingController _taxNumberController = TextEditingController();
+
+  final FocusNode _firstNameFocusNode = FocusNode();
+  final FocusNode _lastNameFocusNode = FocusNode();
+  final FocusNode _nameFocusNode = FocusNode();
   final FocusNode _emailFocusNode = FocusNode();
   final TextEditingController _locationController = TextEditingController();
   final FocusNode _locationFocusNode = FocusNode();
@@ -85,6 +93,8 @@ class EditProfileControllers extends ChangeNotifier {
   int? get selectedRadioValue => _selectedRadioValue;
   String? get phoneNumber => _phoneNumber;
 
+  TextEditingController get firstNameController => _firstNameController;
+  TextEditingController get lastNameController => _lastNameController;
   TextEditingController get nameController => _nameController;
   TextEditingController get emailController => _emailController;
   TextEditingController get phoneController => _phoneController;
@@ -98,6 +108,8 @@ class EditProfileControllers extends ChangeNotifier {
   TextEditingController get taxNameController => _taxNameController;
   TextEditingController get taxNumberController => _taxNumberController;
 
+  FocusNode get firstNameFocusNode => _firstNameFocusNode;
+  FocusNode get lastNameFocusNode => _lastNameFocusNode;
   FocusNode get nameFocusNode => _nameFocusNode;
   FocusNode get emailFocusNode => _emailFocusNode;
   FocusNode get locationFocusNode => _locationFocusNode;
@@ -294,6 +306,93 @@ class EditProfileControllers extends ChangeNotifier {
         _profileImage = pickedFile.path;
         notifyListeners();
       }
+    }
+  }
+
+  Future<void> updateProfile() async {
+    final String firstname = firstNameController.text.trim();
+    final String lastname = lastNameController.text.trim();
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final String? accessToken = await storage.read(key: 'accessToken');
+      if (accessToken == null) {
+        throw Exception("No access token found.");
+      }
+
+      final response = await http.post(
+        Uri.parse('https://dev-server.ojawa.africa/api/v1/auth/update-profile'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'role': Provider.of<HomePageController>(navigatorKey.currentContext!,
+                  listen: false)
+              .userRole,
+          'avatar': "test.png",
+          'firstName': firstname,
+          'lastName': lastname,
+        }),
+      );
+
+      final responseData = json.decode(response.body);
+
+      print('Response Data: $responseData');
+      if (response.statusCode == 200) {
+        // Attempt to parse the response only if it's not empty
+        if (responseData.body.isNotEmpty) {
+          try {
+            final Map<String, dynamic> responseBody =
+                jsonDecode(responseData.body);
+
+            CustomSnackbar.show(
+              'Profile updated successfully.',
+              isError: false,
+            );
+          } catch (e) {
+            print('Error parsing JSON: $e');
+            print('Raw response: ${responseData.body}');
+            throw FormatException("Invalid response format");
+          }
+        } else {
+          throw FormatException("Empty response received");
+        }
+      } else {
+        // Handle non-200 responses
+        final String responseBody = responseData.body;
+        if (responseBody.isNotEmpty) {
+          final Map<String, dynamic> errorResponse = jsonDecode(responseBody);
+          throw Exception(errorResponse['message'] ?? 'Unknown error occurred');
+        } else {
+          throw Exception('Unknown error occurred');
+        }
+      }
+    } catch (e) {
+      String errorMessage = 'Something went wrong. Please try again.';
+
+      // Handle specific errors
+      if (e is FormatException) {
+        errorMessage = 'Invalid response from server.';
+      } else if (e is http.ClientException) {
+        errorMessage = 'Network error. Please check your connection.';
+      } else if (e is SocketException) {
+        errorMessage =
+            'Unable to connect to the server. Please try again later.';
+      }
+
+      // Log the exact error for debugging
+      print('Something went wrong. Error details: $e');
+
+      // Show a professional error message to the user
+      CustomSnackbar.show(
+        errorMessage,
+        isError: true,
+      );
+    } finally {
+      // Stop the loading indicator
+
+      _isLoading = false;
+      notifyListeners();
     }
   }
 }

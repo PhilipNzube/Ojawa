@@ -64,7 +64,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                         goToOrdersPage: mainAppController.goToOrdersPage,
                         showLogoutDialog: (context) => showLogoutDialog(
                             context,
-                            (context) => homePageController.logoutCall(context,
+                            (context) => homePageController.logout(context,
                                 widget.onToggleDarkMode, widget.isDarkMode)),
                         profileImage: homePageController.profileImage,
                         userName: homePageController.userName,

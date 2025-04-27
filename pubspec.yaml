@@ -171,6 +171,7 @@ flutter:
     - images/Total Earnings.png
     - images/Wallet3.png
     - images/My Delivery.png
+    - images/tabler_arrow-back.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

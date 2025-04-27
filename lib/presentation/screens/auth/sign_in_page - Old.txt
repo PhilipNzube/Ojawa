@@ -9,7 +9,6 @@ import '../../../core/widgets/custom_gap.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../controllers/sign_in_controller.dart';
 import '../../controllers/sign_up_controller.dart';
-import '../forgot_password_page/forgot_password_page.dart';
 import '../verify_email/verify_email.dart';
 import 'widgets/bottom_sheets/role_sheet.dart';
 
@@ -63,12 +62,11 @@ class _SignInPageState extends State<SignInPage> with WidgetsBindingObserver {
                   ),
                   Gap(MediaQuery.of(context).size.height * 0.05,
                       useMediaQuery: false),
-                  const AuthLabel(title: 'Email'),
+                  const AuthLabel(title: 'Username'),
                   const Gap(5),
                   CustomTextField(
-                    label: 'example@gmail.com',
-                    controller: signInController.emailController,
-                    focusNode: signInController.emailFocusNode,
+                    controller: signInController.userNameController,
+                    focusNode: signInController.userNameFocusNode,
                   ),
 
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
@@ -127,15 +125,15 @@ class _SignInPageState extends State<SignInPage> with WidgetsBindingObserver {
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: InkWell(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ForgotPassword(
-                                    key: UniqueKey(),
-                                    onToggleDarkMode: widget.onToggleDarkMode,
-                                    isDarkMode: widget.isDarkMode),
-                              ),
-                            );
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => ForgotPassword(
+                            //         key: UniqueKey(),
+                            //         onToggleDarkMode: widget.onToggleDarkMode,
+                            //         isDarkMode: widget.isDarkMode),
+                            //   ),
+                            // );
                           },
                           child: const Text(
                             'Forgot password?',

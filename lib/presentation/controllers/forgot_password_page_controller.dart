@@ -71,7 +71,7 @@ class ForgotPasswordPageController extends ChangeNotifier {
     notifyListeners();
 
     final response = await http.post(
-      Uri.parse('https://signal.payguru.com.ng/api/passowrd/request'),
+      Uri.parse('https://dev-server.ojawa.africa/api/v1/forgot-password'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email}),
     );
@@ -144,13 +144,13 @@ class ForgotPasswordPageController extends ChangeNotifier {
     notifyListeners();
 
     final response = await http.post(
-      Uri.parse('https://signal.payguru.com.ng/api/passowrd/reset'),
+      Uri.parse('https://dev-server.ojawa.africa/api/v1/passowrd/reset'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'email': email,
         'password': password,
         'token': token,
-        'password_confirmation': passwordConfirmation,
+        //'password_confirmation': passwordConfirmation,
       }),
     );
 

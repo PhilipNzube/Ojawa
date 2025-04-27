@@ -41,10 +41,9 @@ class VerifyEmailController extends ChangeNotifier {
     try {
       // Send the POST request
       final response = await http.post(
-        Uri.parse('https://dev-server.ojawa.africa/api/v1/auth/verify'),
+        Uri.parse('https://ojawa-api.onrender.com/api/Auth/request-otp'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(
-            {'email': emailController.text.trim(), 'code': "232423"}),
+        body: jsonEncode({'email': emailController.text.trim()}),
       );
       print('Response Status: ${response.statusCode}');
       print('Response Body: ${response.body}');

@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/widgets/custom_snackbar.dart';
 import '../../main.dart';
 import '../screens/auth/sign_in_page.dart';
+import 'home_page_controller.dart';
 import 'navigation_controller.dart';
 
 class MainAppControllers extends ChangeNotifier {
@@ -208,56 +209,127 @@ class MainAppControllers extends ChangeNotifier {
     }
   }
 
-  Future<void> logoutCall(BuildContext context,
+  Future<void> logout(BuildContext context,
       dynamic Function(bool) onToggleDarkMode, bool isDarkMode) async {
-    _isLoading = true;
-    notifyListeners();
-
-    logout(context, onToggleDarkMode, isDarkMode);
-
-    _isLoading = false;
-    notifyListeners();
-  }
-
-  void logout(BuildContext context, dynamic Function(bool) onToggleDarkMode,
-      bool isDarkMode) async {
     final String? accessToken = await storage.read(key: 'accessToken');
+
     if (accessToken == null) {
-      Navigator.pop(navigatorKey.currentContext!);
       CustomSnackbar.show(
         'You are not logged in.',
         isError: true,
       );
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => SignInPage(
-      //         key: UniqueKey(),
-      //         onToggleDarkMode: onToggleDarkMode,
-      //         isDarkMode: isDarkMode),
-      //   ),
-      // );
 
-      _isLoading = false;
-      notifyListeners();
       return;
     }
-    await storage.delete(key: 'userRole');
-    await storage.delete(key: 'accessToken');
-    await storage.delete(key: 'userId');
-    await prefs.remove('userName');
-    // await prefs.remove('user');
 
-    Navigator.push(
-      navigatorKey.currentContext!,
-      MaterialPageRoute(
-        builder: (context) => SignInPage(
-            key: UniqueKey(),
-            onToggleDarkMode: onToggleDarkMode,
-            isDarkMode: isDarkMode),
-      ),
-    );
-    _isLoading = false;
-    notifyListeners();
+    try {
+      final response = await http.post(
+        Uri.parse('https://signal.payguru.com.ng/api/logout'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+
+      final responseData = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        CustomSnackbar.show(
+          'Logged out successfully!',
+          isError: false,
+        );
+
+        await storage.delete(key: 'userRole');
+        await storage.delete(key: 'accessToken');
+        await storage.delete(key: 'userId');
+        await prefs.remove('userName');
+        // await prefs.remove('user');
+
+        Navigator.push(
+          navigatorKey.currentContext!,
+          MaterialPageRoute(
+            builder: (context) => SignInPage(
+                key: UniqueKey(),
+                onToggleDarkMode: onToggleDarkMode,
+                isDarkMode: isDarkMode),
+          ),
+        );
+        Provider.of<HomePageController>(navigatorKey.currentContext!,
+                listen: false)
+            .setIsLoggedOut(true);
+      } else if (response.statusCode == 401) {
+        final String message = responseData['message'] ?? 'Unauthorized';
+        CustomSnackbar.show(
+          'Error: $message',
+          isError: true,
+        );
+      } else {
+        CustomSnackbar.show(
+          'An unexpected error occurred. Please try again.',
+          isError: true,
+        );
+      }
+    } catch (e) {
+      CustomSnackbar.show(
+        'Failed to connect to the server. Please check your internet connection.',
+        isError: true,
+      );
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
+
+  // Future<void> logoutCall(BuildContext context,
+  //     dynamic Function(bool) onToggleDarkMode, bool isDarkMode) async {
+  //   _isLoading = true;
+  //   notifyListeners();
+
+  //   logout(context, onToggleDarkMode, isDarkMode);
+
+  //   _isLoading = false;
+  //   notifyListeners();
+  // }
+
+  // void logout(BuildContext context, dynamic Function(bool) onToggleDarkMode,
+  //     bool isDarkMode) async {
+  //   final String? accessToken = await storage.read(key: 'accessToken');
+  //   if (accessToken == null) {
+  //     Navigator.pop(navigatorKey.currentContext!);
+  //     CustomSnackbar.show(
+  //       'You are not logged in.',
+  //       isError: true,
+  //     );
+  //     // Navigator.push(
+  //     //   context,
+  //     //   MaterialPageRoute(
+  //     //     builder: (context) => SignInPage(
+  //     //         key: UniqueKey(),
+  //     //         onToggleDarkMode: onToggleDarkMode,
+  //     //         isDarkMode: isDarkMode),
+  //     //   ),
+  //     // );
+
+  //     _isLoading = false;
+  //     notifyListeners();
+  //     return;
+  //   }
+  //   await storage.delete(key: 'userRole');
+  //   await storage.delete(key: 'accessToken');
+  //   await storage.delete(key: 'userId');
+  //   await prefs.remove('userName');
+  //   // await prefs.remove('user');
+
+  //   Navigator.push(
+  //     navigatorKey.currentContext!,
+  //     MaterialPageRoute(
+  //       builder: (context) => SignInPage(
+  //           key: UniqueKey(),
+  //           onToggleDarkMode: onToggleDarkMode,
+  //           isDarkMode: isDarkMode),
+  //     ),
+  //   );
+  //   _isLoading = false;
+  //   notifyListeners();
+  // }
 }

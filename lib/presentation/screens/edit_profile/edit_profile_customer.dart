@@ -148,10 +148,26 @@ class _EditProfileCustomerState extends State<EditProfileCustomer> {
                         ),
                         SizedBox(
                             height: MediaQuery.of(context).size.height * 0.04),
+                        // AuthTextField(
+                        //   label: 'Name',
+                        //   controller: editProfileController.nameController,
+                        //   focusNode: editProfileController.nameFocusNode,
+                        //   floatingLabelBehavior: FloatingLabelBehavior.auto,
+                        // ),
+
                         AuthTextField(
-                          label: 'Name',
-                          controller: editProfileController.nameController,
-                          focusNode: editProfileController.nameFocusNode,
+                          label: 'Firstname',
+                          controller: editProfileController.firstNameController,
+                          focusNode: editProfileController.firstNameFocusNode,
+                          floatingLabelBehavior: FloatingLabelBehavior.auto,
+                        ),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.03),
+
+                        AuthTextField(
+                          label: 'Lastname',
+                          controller: editProfileController.lastNameController,
+                          focusNode: editProfileController.lastNameFocusNode,
                           floatingLabelBehavior: FloatingLabelBehavior.auto,
                         ),
                         SizedBox(
@@ -267,7 +283,9 @@ class _EditProfileCustomerState extends State<EditProfileCustomer> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 0.0),
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                editProfileController.updateProfile();
+                              },
                               style: ButtonStyle(
                                 backgroundColor:
                                     WidgetStateProperty.resolveWith<Color>(

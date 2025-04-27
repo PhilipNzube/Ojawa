@@ -13,12 +13,10 @@ import 'navigation_controller.dart';
 
 class SignInController extends ChangeNotifier {
   final FocusNode _userNameFocusNode = FocusNode();
-  final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
   final FocusNode _roleFocusNode = FocusNode();
 
   final TextEditingController _userNameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _roleController = TextEditingController();
   final storage = const FlutterSecureStorage();
@@ -36,12 +34,9 @@ class SignInController extends ChangeNotifier {
 
   //public getters
   FocusNode get userNameFocusNode => _userNameFocusNode;
-  FocusNode get emailFocusNode => _emailFocusNode;
   FocusNode get passwordFocusNode => _passwordFocusNode;
   FocusNode get roleFocusNode => _roleFocusNode;
-
   TextEditingController get userNameController => _userNameController;
-  TextEditingController get emailController => _emailController;
   TextEditingController get passwordController => _passwordController;
   TextEditingController get roleController => _roleController;
   bool get isLoading => _isLoading;
@@ -104,10 +99,9 @@ class SignInController extends ChangeNotifier {
 
     final String userName = _userNameController.text.trim();
     final String password = _passwordController.text.trim();
-    final String email = emailController.text.trim();
     final String userRole = _roleController.text.trim();
 
-    if (email.isEmpty || password.isEmpty || userRole == 'Select Role') {
+    if (userName.isEmpty || password.isEmpty || userRole == 'Select Role') {
       // Show an error message if any field is empty
       CustomSnackbar.show(
         'All fields are required.',
@@ -131,11 +125,12 @@ class SignInController extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
+      // Send the POST request
       final response = await http.post(
-        Uri.parse('https://dev-server.ojawa.africa/api/v1/auth/login'),
+        Uri.parse('https://ojawa-api.onrender.com/api/Auth/$_url'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'email': email,
+          'username': userName,
           'password': password,
         }),
       );

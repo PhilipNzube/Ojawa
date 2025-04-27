@@ -20,8 +20,6 @@ import 'home_page_controller.dart';
 import 'navigation_controller.dart';
 
 class SignUpController extends ChangeNotifier {
-  final FocusNode _firstNameFocusNode = FocusNode();
-  final FocusNode _lastNameFocusNode = FocusNode();
   final FocusNode _fullNameFocusNode = FocusNode();
   final FocusNode _displayNameFocusNode = FocusNode();
   final FocusNode _userNameFocusNode = FocusNode();
@@ -30,7 +28,6 @@ class SignUpController extends ChangeNotifier {
   final FocusNode _addressFocusNode = FocusNode();
   final FocusNode _cityFocusNode = FocusNode();
   final FocusNode _stateFocusNode = FocusNode();
-  final FocusNode _countryFocusNode = FocusNode();
   final FocusNode _storeNameFocusNode = FocusNode();
   final FocusNode _storeWebsiteUrlFocusNode = FocusNode();
   final FocusNode _storeDescriptionFocusNode = FocusNode();
@@ -38,8 +35,6 @@ class SignUpController extends ChangeNotifier {
   final FocusNode _password2FocusNode = FocusNode();
   final FocusNode _roleFocusNode = FocusNode();
 
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _displayNameController = TextEditingController();
   final TextEditingController _userNameController = TextEditingController();
@@ -48,7 +43,6 @@ class SignUpController extends ChangeNotifier {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
-  final TextEditingController _countryController = TextEditingController();
   final TextEditingController _storeNameController = TextEditingController();
   final TextEditingController _storeWebsiteUrlController =
       TextEditingController();
@@ -85,31 +79,24 @@ class SignUpController extends ChangeNotifier {
   String get selectedRole => _selectedRole;
   bool get isLoading => _isLoading;
 
-  FocusNode get firstNameFocusNode => _firstNameFocusNode;
-  FocusNode get lastNameFocusNode => _lastNameFocusNode;
   FocusNode get fullNameFocusNode => _fullNameFocusNode;
   FocusNode get userNameFocusNode => _userNameFocusNode;
   FocusNode get emailFocusNode => _emailFocusNode;
   FocusNode get addressFocusNode => _addressFocusNode;
   FocusNode get cityFocusNode => _cityFocusNode;
   FocusNode get stateFocusNode => _stateFocusNode;
-  FocusNode get countryFocusNode => _countryFocusNode;
   FocusNode get storeNameFocusNode => _storeNameFocusNode;
   FocusNode get storeWebsiteUrlFocusNode => _storeWebsiteUrlFocusNode;
   FocusNode get storeDescriptionFocusNode => _storeDescriptionFocusNode;
   FocusNode get passwordFocusNode => _passwordFocusNode;
   FocusNode get password2FocusNode => _password2FocusNode;
   FocusNode get roleFocusNode => _roleFocusNode;
-
-  TextEditingController get firstNameController => _firstNameController;
-  TextEditingController get lastNameController => _lastNameController;
   TextEditingController get fullNameController => _fullNameController;
   TextEditingController get userNameController => _userNameController;
   TextEditingController get emailController => _emailController;
   TextEditingController get addressController => _addressController;
   TextEditingController get cityController => _cityController;
   TextEditingController get stateController => _stateController;
-  TextEditingController get countryController => _countryController;
   TextEditingController get storeNameController => _storeNameController;
   TextEditingController get storeWebsiteUrlController =>
       _storeWebsiteUrlController;
@@ -190,12 +177,9 @@ class SignUpController extends ChangeNotifier {
     if (prefs == null) {
       await initializePrefs();
     }
-    final String firstname = firstNameController.text.trim();
-    final String lastname = lastNameController.text.trim();
     final String fullname = fullNameController.text.trim();
     final String username = userNameController.text.trim();
     final String email = emailController.text.trim();
-    final String country = countryController.text.trim();
     final String address = addressController.text.trim();
     final String city = cityController.text.trim();
     final String state = stateController.text.trim();
@@ -270,23 +254,66 @@ class SignUpController extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    final response = await http.post(
-      Uri.parse('https://dev-server.ojawa.africa/api/v1/auth/register'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'firstName': firstname,
-        'lastname': lastname,
-        'email': email,
-        'password': password,
-        'phone': localPhoneNumber,
-        'country': {"code": "NG", "name": "Nigeria", "mobileExt": "+234"},
-        'role': _selectedRole,
-      }),
-    );
+    final url = Uri.parse('https://ojawa-api.onrender.com/api/Auth/$_url');
+    dynamic request;
+    if (_selectedRole == "Customer") {
+      request = http.MultipartRequest('POST', url)
+        ..fields['username'] = username
+        ..fields['email'] = email
+        ..fields['phone'] = localPhoneNumber
+        ..fields['gender'] = selectedGender
+        ..fields['state'] = state
+        ..fields['password'] = password
+        ..fields['confirmPassword'] = passwordConfirmation;
+    } else if (_selectedRole == "Vendor") {
+      request = http.MultipartRequest('POST', url)
+        ..fields['fullName'] = fullname
+        ..fields['username'] = username
+        ..fields['email'] = email
+        ..fields['phone'] = localPhoneNumber
+        ..fields['address'] = address
+        ..fields['city'] = city
+        ..fields['state'] = state
+        ..fields['storeName'] = storename
+        ..fields['storeWebsiteUrl'] = storeWebsiteUrl
+        ..fields['storeDescription'] = storeDescription
+        ..fields['password'] = password
+        ..fields['confirmPassword'] = passwordConfirmation;
+    } else if (_selectedRole == "Logistics") {
+      request = http.MultipartRequest('POST', url)
+        ..fields['fullName'] = fullname
+        ..fields['email'] = email
+        ..fields['phone'] = localPhoneNumber
+        ..fields['password'] = password
+        ..fields['confirmPassword'] = passwordConfirmation;
+    }
 
+    // Handling profile picture upload if it's a local file
+    if (_profileImage != null && !_profileImage.startsWith('http')) {
+      File imageFile = File(_profileImage);
+      if (await imageFile.exists()) {
+        var stream =
+            http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
+        var length = await imageFile.length();
+        request.files.add(http.MultipartFile(
+          'profilePicture',
+          stream,
+          length,
+          filename: path.basename(imageFile.path),
+        ));
+      } else {
+        print('Image file not found. Skipping image upload.');
+      }
+    } else {
+      print(
+          'Skipping image upload as the profile image is from an HTTP source.');
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
     final responseData = json.decode(response.body);
-
-    print('Response Data: $responseData');
+    print('Response Status: ${response.statusCode}');
+    print('Response Body: ${response.body}');
 
     if (response.statusCode == 200) {
       Provider.of<NavigationController>(navigatorKey.currentContext!,

@@ -13,7 +13,6 @@ import 'package:async/async.dart';
 import 'dart:async';
 
 import '../../core/widgets/custom_snackbar.dart';
-import '../../main.dart';
 import '../screens/main_app/main_app.dart';
 import '../screens/verify_email/verify_email.dart';
 import 'home_page_controller.dart';
@@ -231,9 +230,9 @@ class SignUpController extends ChangeNotifier {
       return;
     }
 
-    if (password.length < 6) {
+    if (password.length < 8) {
       CustomSnackbar.show(
-        'Password must be at least 6 characters.',
+        'Password must be at least 8 characters.',
         isError: true,
       );
 
@@ -275,25 +274,26 @@ class SignUpController extends ChangeNotifier {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'firstName': firstname,
-        'lastname': lastname,
+        'lastName': lastname,
         'email': email,
         'password': password,
         'phone': localPhoneNumber,
         'country': {"code": "NG", "name": "Nigeria", "mobileExt": "+234"},
-        'role': _selectedRole,
+        'role': _selectedRole.toLowerCase(),
       }),
     );
 
     final responseData = json.decode(response.body);
 
     print('Response Data: $responseData');
+    print('Response Data: ${response.statusCode}');
 
-    if (response.statusCode == 200) {
-      Provider.of<NavigationController>(navigatorKey.currentContext!,
-              listen: false)
+    if (response.statusCode == 201) {
+      Provider.of<NavigationController>(context, listen: false)
           .setSelectedIndex(0);
       final String accessToken = responseData['token'];
-      final int userId = responseData['value']; // Extract userId from response
+      final int userId = responseData['value'];
+      final String message = responseData['message'];
 
       await prefs.setString('userName', username);
       await storage.write(key: 'userRole', value: _selectedRole);
@@ -303,7 +303,7 @@ class SignUpController extends ChangeNotifier {
 
       // Handle successful response
       CustomSnackbar.show(
-        'Sign up successful!',
+        message,
         isError: false,
       );
 
@@ -311,7 +311,7 @@ class SignUpController extends ChangeNotifier {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => MainApp(
+          builder: (context) => VerifyEmail(
               key: UniqueKey(),
               onToggleDarkMode: onToggleDarkMode,
               isDarkMode: isDarkMode),
@@ -319,14 +319,13 @@ class SignUpController extends ChangeNotifier {
       );
       _isLoading = false;
       notifyListeners();
-    } else if (response.statusCode == 400) {
+    } else if (response.statusCode == 409) {
       _isLoading = false;
       notifyListeners();
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       final String error = responseData['message'];
 
-      if (error ==
-          "Email account has not been verified. Kindly complete verification to sign up") {
+      if (error == "User already exists. Please verify your email.") {
         Navigator.push(
           context,
           MaterialPageRoute(

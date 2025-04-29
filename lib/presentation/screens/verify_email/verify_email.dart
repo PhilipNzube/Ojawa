@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/widgets/custom_snackbar.dart';
+import '../../../main.dart';
+import '../../controllers/sign_up_controller.dart';
 import '../../controllers/verify_email_controller.dart';
 
 class VerifyEmail extends StatefulWidget {
@@ -164,8 +166,21 @@ class VerifyEmailState extends State<VerifyEmail>
                     onPressed: () async {
                       if (verifyEmailController
                           .emailController.text.isNotEmpty) {
-                        await verifyEmailController.verifyEmail(context,
-                            widget.onToggleDarkMode, widget.isDarkMode);
+                        if (Provider.of<SignUpController>(
+                                    navigatorKey.currentContext!,
+                                    listen: false)
+                                .emailController
+                                .text
+                                .trim() ==
+                            verifyEmailController.emailController.text.trim()) {
+                          await verifyEmailController.verifyEmail(context,
+                              widget.onToggleDarkMode, widget.isDarkMode);
+                        } else {
+                          CustomSnackbar.show(
+                            'The email address entered and the email address used for sign up do not match',
+                            isError: true,
+                          );
+                        }
                       } else {
                         CustomSnackbar.show(
                           'Please enter an email address.',

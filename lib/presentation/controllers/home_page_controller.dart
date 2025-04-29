@@ -439,7 +439,7 @@ class HomePageController extends ChangeNotifier {
   Future<void> logout(BuildContext context,
       dynamic Function(bool) onToggleDarkMode, bool isDarkMode) async {
     final String? accessToken = await storage.read(key: 'accessToken');
-
+    Navigator.pop(navigatorKey.currentContext!);
     if (accessToken == null) {
       CustomSnackbar.show(
         'You are not logged in.',
@@ -448,10 +448,12 @@ class HomePageController extends ChangeNotifier {
 
       return;
     }
-
+    CustomSnackbar.show(
+      'Logging out...',
+    );
     try {
       final response = await http.post(
-        Uri.parse('https://signal.payguru.com.ng/api/logout'),
+        Uri.parse('https://dev-server.ojawa.africa/api/v1/auth/logout'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $accessToken',
@@ -459,6 +461,9 @@ class HomePageController extends ChangeNotifier {
       );
 
       final responseData = json.decode(response.body);
+
+      print('Response Status: ${response.statusCode}');
+      print('Response Data: $responseData');
 
       if (response.statusCode == 200) {
         CustomSnackbar.show(
@@ -483,7 +488,7 @@ class HomePageController extends ChangeNotifier {
         );
         _isLoggedOut = true;
         notifyListeners();
-      } else if (response.statusCode == 401) {
+      } else if (response.statusCode == 400) {
         final String message = responseData['message'] ?? 'Unauthorized';
         CustomSnackbar.show(
           'Error: $message',

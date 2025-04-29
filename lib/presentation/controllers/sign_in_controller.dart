@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import '../../core/widgets/custom_snackbar.dart';
 import '../../main.dart';
 import '../screens/main_app/main_app.dart';
+import '../screens/verify_email/verify_email.dart';
 import 'home_page_controller.dart';
 import 'navigation_controller.dart';
 
@@ -118,10 +119,10 @@ class SignInController extends ChangeNotifier {
     }
 
     // Validate password length
-    if (password.length < 6) {
+    if (password.length < 8) {
       // Show an error message if password is too short
       CustomSnackbar.show(
-        'Password must be at least 6 characters.',
+        'Password must be at least 8 characters.',
         isError: true,
       );
 
@@ -150,18 +151,16 @@ class SignInController extends ChangeNotifier {
             .setSelectedIndex(0);
         final Map<String, dynamic> responseData =
             json.decode(response.body); // Decode the response body
-        final String accessToken = responseData['token'];
-        final int userId =
-            responseData['userId']; // Extract userId from response
+        final String accessToken = responseData['data']['accessToken'];
+        final String message = responseData['message'];
 
         await prefs.setString('userName', userName);
         await storage.write(key: 'userRole', value: _selectedRole);
         await storage.write(key: 'accessToken', value: accessToken);
-        await storage.write(key: 'userId', value: userId.toString());
 
         // Handle the successful response here
         CustomSnackbar.show(
-          'Sign in successful!',
+          message,
           isError: false,
         );
 

@@ -11,6 +11,7 @@ import '../../controllers/sign_in_controller.dart';
 import '../../controllers/sign_up_controller.dart';
 import '../forgot_password_page/forgot_password_page.dart';
 import '../verify_email/verify_email.dart';
+import 'sign_up_page.dart';
 import 'widgets/bottom_sheets/role_sheet.dart';
 
 class SignInPage extends StatefulWidget {
@@ -222,7 +223,7 @@ class _SignInPageState extends State<SignInPage> with WidgetsBindingObserver {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => VerifyEmail(
+                              builder: (context) => SignUpPage(
                                   key: UniqueKey(),
                                   onToggleDarkMode: widget.onToggleDarkMode,
                                   isDarkMode: widget.isDarkMode),

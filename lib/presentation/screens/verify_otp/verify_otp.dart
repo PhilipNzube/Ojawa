@@ -8,13 +8,13 @@ class VerifyOtp extends StatefulWidget {
   final Function(bool) onToggleDarkMode;
   final bool isDarkMode;
   final String email;
-  final String token;
+  final String? token;
   const VerifyOtp(
       {super.key,
       required this.onToggleDarkMode,
       required this.isDarkMode,
       required this.email,
-      required this.token});
+      this.token});
 
   @override
   VerifyOtpState createState() => VerifyOtpState();
@@ -27,6 +27,7 @@ class VerifyOtpState extends State<VerifyOtp> {
       builder: (context, orientation) {
         return ChangeNotifierProvider(
           create: (context) => VerifyOtpController(
+              email: widget.email,
               token: widget.token,
               onToggleDarkMode: widget.onToggleDarkMode,
               isDarkMode: widget.isDarkMode),
@@ -88,7 +89,7 @@ class VerifyOtpState extends State<VerifyOtp> {
                         SizedBox(
                             height: MediaQuery.of(context).size.height * 0.1),
                         OtpTextField(
-                          numberOfFields: 4,
+                          numberOfFields: 6,
                           fieldWidth: (50 / MediaQuery.of(context).size.width) *
                               MediaQuery.of(context).size.width,
                           focusedBorderColor: const Color(
@@ -104,29 +105,42 @@ class VerifyOtpState extends State<VerifyOtp> {
                         ),
                         SizedBox(
                             height: MediaQuery.of(context).size.height * 0.1),
-                        // const Center(
-                        //   child: Text(
-                        //     "Didn't receive code?",
-                        //     style: TextStyle(
-                        //       fontFamily: 'Poppins',
-                        //       fontSize: 15.0,
-                        //       fontWeight: FontWeight.bold,
-                        //       color: Colors.grey,
-                        //     ),
-                        //   ),
-                        // ),
-                        // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                        // Center(
-                        //   child: Text(
-                        //     "Resend it",
-                        //     style: TextStyle(
-                        //       fontFamily: 'Poppins',
-                        //       fontSize: 15.0,
-                        //       fontWeight: FontWeight.bold,
-                        //       color: Theme.of(context).colorScheme.onSurface,
-                        //     ),
-                        //   ),
-                        // ),
+                        const Center(
+                          child: Text(
+                            "Didn't receive code?",
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02),
+                        Center(
+                          child: verifyOtpController.isLoading2 == false
+                              ? InkWell(
+                                  onTap: () async {
+                                    await verifyOtpController
+                                        .resendEmail(context);
+                                  },
+                                  child: Text(
+                                    "Resend it",
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                    ),
+                                  ),
+                                )
+                              : const CircularProgressIndicator(
+                                  color: Colors.black,
+                                ),
+                        ),
                         SizedBox(
                             height: MediaQuery.of(context).size.height * 0.1),
                         if (verifyOtpController.isLoading)

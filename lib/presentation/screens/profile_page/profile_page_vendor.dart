@@ -5,6 +5,7 @@ import '../../../core/widgets/custom_gap.dart';
 import '../../../core/widgets/logout_dialog.dart';
 import '../../controllers/main_app_controllers.dart';
 import '../../controllers/profile_page_controller.dart';
+import '../../controllers/session_controller.dart';
 import '../add_new_product/add_new_product.dart';
 import '../edit_profile/edit_profile_vendor.dart';
 import '../manage_pickup_location/manage_pickup_location.dart';
@@ -37,6 +38,7 @@ class ProfilePageVendor extends StatefulWidget {
 class _ProfilePageVendorState extends State<ProfilePageVendor> {
   @override
   Widget build(BuildContext context) {
+    final sessionController = Provider.of<SessionController>(context);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return ChangeNotifierProvider(
       create: (context) => ProfilePageController(
@@ -386,7 +388,11 @@ class _ProfilePageVendorState extends State<ProfilePageVendor> {
                                   img: 'images/Logout2.png',
                                   onTap: () {
                                     showLogoutDialog(
-                                        context, profilePageController.logout);
+                                        context,
+                                        (context) => sessionController.logout(
+                                            context,
+                                            widget.onToggleDarkMode,
+                                            widget.isDarkMode));
                                   },
                                 ),
                               ],

@@ -114,6 +114,11 @@ class HomePageController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setIsLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
   void setIsLoggedOut(bool value) {
     _isLoggedOut = value;
     notifyListeners();
@@ -436,80 +441,80 @@ class HomePageController extends ChangeNotifier {
     }
   }
 
-  Future<void> logout(BuildContext context,
-      dynamic Function(bool) onToggleDarkMode, bool isDarkMode) async {
-    final String? accessToken = await storage.read(key: 'accessToken');
-    Navigator.pop(navigatorKey.currentContext!);
-    if (accessToken == null) {
-      CustomSnackbar.show(
-        'You are not logged in.',
-        isError: true,
-      );
+  // Future<void> logout(BuildContext context,
+  //     dynamic Function(bool) onToggleDarkMode, bool isDarkMode) async {
+  //   final String? accessToken = await storage.read(key: 'accessToken');
+  //   Navigator.pop(navigatorKey.currentContext!);
+  //   if (accessToken == null) {
+  //     CustomSnackbar.show(
+  //       'You are not logged in.',
+  //       isError: true,
+  //     );
 
-      return;
-    }
-    CustomSnackbar.show(
-      'Logging out...',
-    );
-    try {
-      final response = await http.post(
-        Uri.parse('https://dev-server.ojawa.africa/api/v1/auth/logout'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $accessToken',
-        },
-      );
+  //     return;
+  //   }
+  //   CustomSnackbar.show(
+  //     'Logging out...',
+  //   );
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse('https://dev-server.ojawa.africa/api/v1/auth/logout'),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': 'Bearer $accessToken',
+  //       },
+  //     );
 
-      final responseData = json.decode(response.body);
+  //     final responseData = json.decode(response.body);
 
-      print('Response Status: ${response.statusCode}');
-      print('Response Data: $responseData');
+  //     print('Response Status: ${response.statusCode}');
+  //     print('Response Data: $responseData');
 
-      if (response.statusCode == 200) {
-        CustomSnackbar.show(
-          'Logged out successfully!',
-          isError: false,
-        );
+  //     if (response.statusCode == 200) {
+  //       CustomSnackbar.show(
+  //         'Logged out successfully!',
+  //         isError: false,
+  //       );
 
-        await storage.delete(key: 'userRole');
-        await storage.delete(key: 'accessToken');
-        await storage.delete(key: 'userId');
-        await prefs.remove('userName');
-        // await prefs.remove('user');
+  //       await storage.delete(key: 'userRole');
+  //       await storage.delete(key: 'accessToken');
+  //       await storage.delete(key: 'userId');
+  //       await prefs.remove('userName');
+  //       // await prefs.remove('user');
 
-        Navigator.push(
-          navigatorKey.currentContext!,
-          MaterialPageRoute(
-            builder: (context) => SignInPage(
-                key: UniqueKey(),
-                onToggleDarkMode: onToggleDarkMode,
-                isDarkMode: isDarkMode),
-          ),
-        );
-        _isLoggedOut = true;
-        notifyListeners();
-      } else if (response.statusCode == 400) {
-        final String message = responseData['message'] ?? 'Unauthorized';
-        CustomSnackbar.show(
-          message,
-          isError: true,
-        );
-      } else {
-        CustomSnackbar.show(
-          'An unexpected error occurred. Please try again.',
-          isError: true,
-        );
-      }
-    } catch (e) {
-      CustomSnackbar.show(
-        'Failed to connect to the server. Please check your internet connection.',
-        isError: true,
-      );
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
+  //       Navigator.push(
+  //         navigatorKey.currentContext!,
+  //         MaterialPageRoute(
+  //           builder: (context) => SignInPage(
+  //               key: UniqueKey(),
+  //               onToggleDarkMode: onToggleDarkMode,
+  //               isDarkMode: isDarkMode),
+  //         ),
+  //       );
+  //       _isLoggedOut = true;
+  //       notifyListeners();
+  //     } else if (response.statusCode == 400) {
+  //       final String message = responseData['message'] ?? 'Unauthorized';
+  //       CustomSnackbar.show(
+  //         message,
+  //         isError: true,
+  //       );
+  //     } else {
+  //       CustomSnackbar.show(
+  //         'An unexpected error occurred. Please try again.',
+  //         isError: true,
+  //       );
+  //     }
+  //   } catch (e) {
+  //     CustomSnackbar.show(
+  //       'Failed to connect to the server. Please check your internet connection.',
+  //       isError: true,
+  //     );
+  //   } finally {
+  //     _isLoading = false;
+  //     notifyListeners();
+  //   }
+  // }
 
   // Future<void> logoutCall(BuildContext context,
   //     dynamic Function(bool) onToggleDarkMode, bool isDarkMode) async {

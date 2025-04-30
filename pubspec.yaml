@@ -53,6 +53,7 @@ dependencies:
   flutter_otp_text_field: ^1.2.0
   provider: ^6.1.2
   horizontal_data_table: ^4.3.1
+  jwt_decoder: ^2.0.1
 
 dev_dependencies:
   flutter_test:

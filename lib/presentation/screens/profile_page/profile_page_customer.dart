@@ -7,6 +7,7 @@ import '../../../core/widgets/logout_dialog.dart';
 import '../../controllers/main_app_controllers.dart';
 import '../../controllers/profile_page_controller.dart';
 import '../../../main.dart';
+import '../../controllers/session_controller.dart';
 import '../edit_profile/edit_profile_customer.dart';
 import '../faq_page/faq_page.dart';
 import 'widgets/profile_options.dart';
@@ -35,6 +36,7 @@ class ProfilePageCustomer extends StatefulWidget {
 class _ProfilePageCustomerState extends State<ProfilePageCustomer> {
   @override
   Widget build(BuildContext context) {
+    final sessionController = Provider.of<SessionController>(context);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     //final profilePageController = Provider.of<ProfilePageController>(context);
     return ChangeNotifierProvider(
@@ -557,7 +559,11 @@ class _ProfilePageCustomerState extends State<ProfilePageCustomer> {
                                 img: 'images/Logout2.png',
                                 onTap: () {
                                   showLogoutDialog(
-                                      context, profilePageController.logout);
+                                      context,
+                                      (context) => sessionController.logout(
+                                          context,
+                                          widget.onToggleDarkMode,
+                                          widget.isDarkMode));
                                 },
                               ),
                             ],

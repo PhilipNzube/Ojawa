@@ -23,6 +23,7 @@ import 'presentation/controllers/order_details_controller.dart';
 import 'presentation/controllers/payment_method_controller.dart';
 import 'presentation/controllers/return_order2_controller.dart';
 import 'presentation/controllers/return_order_controller.dart';
+import 'presentation/controllers/session_controller.dart';
 import 'presentation/controllers/sign_in_controller.dart';
 import 'presentation/controllers/sign_up_controller.dart';
 import 'presentation/controllers/sucessful_order_page_controller.dart';
@@ -84,6 +85,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
             create: (_) => ManagePickupLocationControllers()),
         ChangeNotifierProvider(create: (_) => AddPickupLocationControllers()),
+        ChangeNotifierProvider(
+            create: (_) => SessionController()..initializeSession()),
       ],
       child: Consumer<ThemeController>(
         builder: (context, themeController, child) {

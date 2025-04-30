@@ -9,6 +9,7 @@ import '../../controllers/home_page_controller.dart';
 import '../../controllers/main_app_controllers.dart';
 import '../../controllers/navigation_controller.dart';
 import '../../controllers/notification_controller.dart';
+import '../../controllers/session_controller.dart';
 import '../cash_page/cash_page.dart';
 import '../categories_page/categories_page.dart';
 import '../home_page/home_page_customer.dart';
@@ -40,6 +41,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   Widget build(BuildContext context) {
+    final sessionController = Provider.of<SessionController>(context);
     //final homePageController = Provider.of<HomePageController>(context);
     final navController = Provider.of<NavigationController>(context);
     //final mainAppController = Provider.of<MainAppControllers>(context);
@@ -64,7 +66,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                         goToOrdersPage: mainAppController.goToOrdersPage,
                         showLogoutDialog: (context) => showLogoutDialog(
                             context,
-                            (context) => homePageController.logout(context,
+                            (context) => sessionController.logout(context,
                                 widget.onToggleDarkMode, widget.isDarkMode)),
                         profileImage: homePageController.profileImage,
                         userName: homePageController.userName,

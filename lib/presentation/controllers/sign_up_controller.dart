@@ -291,15 +291,11 @@ class SignUpController extends ChangeNotifier {
     if (response.statusCode == 201) {
       Provider.of<NavigationController>(context, listen: false)
           .setSelectedIndex(0);
-      final String accessToken = responseData['token'];
-      final int userId = responseData['value'];
+      final String accessToken = responseData['data']['accessToken'];
       final String message = responseData['message'];
 
-      await prefs.setString('userName', username);
       await storage.write(key: 'userRole', value: _selectedRole);
       await storage.write(key: 'accessToken', value: accessToken);
-      await storage.write(
-          key: 'userId', value: userId.toString()); // Store userId as a string
 
       // Handle successful response
       CustomSnackbar.show(

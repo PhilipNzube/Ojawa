@@ -12,6 +12,7 @@ import '../../main.dart';
 import '../screens/auth/sign_in_page.dart';
 import 'home_page_controller.dart';
 import 'navigation_controller.dart';
+import 'session_controller.dart';
 
 class MainAppControllers extends ChangeNotifier {
   int _selectedIndex = 0;
@@ -50,6 +51,23 @@ class MainAppControllers extends ChangeNotifier {
   String get userRole => _userRole;
 
   void initialize() async {
+    if (!Provider.of<SessionController>(navigatorKey.currentContext!,
+            listen: false)
+        .isAuthenticated) {
+      Navigator.push(
+        navigatorKey.currentContext!,
+        MaterialPageRoute(
+          builder: (context) => SignInPage(
+              key: UniqueKey(),
+              onToggleDarkMode: onToggleDarkMode,
+              isDarkMode: isDarkMode),
+        ),
+      );
+      CustomSnackbar.show(
+        'You have been logged out. Session expired',
+        isError: true,
+      );
+    }
     connectivitySubscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {

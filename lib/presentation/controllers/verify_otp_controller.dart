@@ -1,13 +1,17 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/widgets/custom_snackbar.dart';
 import '../screens/auth/sign_up_page.dart';
 import '../screens/main_app/main_app.dart';
+import 'session_controller.dart';
 
 class VerifyOtpController extends ChangeNotifier {
+  final storage = const FlutterSecureStorage();
   String _otpCode = "";
   bool _isLoading = false;
   bool _isLoading2 = false;
@@ -87,6 +91,7 @@ class VerifyOtpController extends ChangeNotifier {
   }
 
   Future<void> resendEmail(BuildContext context) async {
+    final String? accessToken = await storage.read(key: 'accessToken');
     _isLoading2 = true;
     notifyListeners();
 
@@ -108,6 +113,8 @@ class VerifyOtpController extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final String message = responseData['message'];
+        await Provider.of<SessionController>(context, listen: false)
+            .saveToken(accessToken!);
 
         CustomSnackbar.show(
           message,

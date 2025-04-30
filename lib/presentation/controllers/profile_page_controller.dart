@@ -238,78 +238,78 @@ class ProfilePageController extends ChangeNotifier {
     }
   }
 
-  Future<void> logout(
-    BuildContext context,
-  ) async {
-    final String? accessToken = await storage.read(key: 'accessToken');
+  // Future<void> logout(
+  //   BuildContext context,
+  // ) async {
+  //   final String? accessToken = await storage.read(key: 'accessToken');
 
-    if (accessToken == null) {
-      CustomSnackbar.show(
-        'You are not logged in.',
-        isError: true,
-      );
+  //   if (accessToken == null) {
+  //     CustomSnackbar.show(
+  //       'You are not logged in.',
+  //       isError: true,
+  //     );
 
-      return;
-    }
+  //     return;
+  //   }
 
-    try {
-      final response = await http.post(
-        Uri.parse('https://signal.payguru.com.ng/api/logout'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $accessToken',
-        },
-      );
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse('https://signal.payguru.com.ng/api/logout'),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': 'Bearer $accessToken',
+  //       },
+  //     );
 
-      final responseData = json.decode(response.body);
+  //     final responseData = json.decode(response.body);
 
-      if (response.statusCode == 200) {
-        CustomSnackbar.show(
-          'Logged out successfully!',
-          isError: false,
-        );
+  //     if (response.statusCode == 200) {
+  //       CustomSnackbar.show(
+  //         'Logged out successfully!',
+  //         isError: false,
+  //       );
 
-        await storage.delete(key: 'userRole');
-        await storage.delete(key: 'accessToken');
-        await storage.delete(key: 'userId');
-        await prefs.remove('userName');
-        // await prefs.remove('user');
+  //       await storage.delete(key: 'userRole');
+  //       await storage.delete(key: 'accessToken');
+  //       await storage.delete(key: 'userId');
+  //       await prefs.remove('userName');
+  //       // await prefs.remove('user');
 
-        Navigator.push(
-          navigatorKey.currentContext!,
-          MaterialPageRoute(
-            builder: (context) => SignInPage(
-                key: UniqueKey(),
-                onToggleDarkMode: onToggleDarkMode,
-                isDarkMode: isDarkMode),
-          ),
-        );
-        Provider.of<HomePageController>(navigatorKey.currentContext!,
-                listen: false)
-            .setIsLoggedOut(true);
-        notifyListeners();
-      } else if (response.statusCode == 401) {
-        final String message = responseData['message'] ?? 'Unauthorized';
-        CustomSnackbar.show(
-          message,
-          isError: true,
-        );
-      } else {
-        CustomSnackbar.show(
-          'An unexpected error occurred. Please try again.',
-          isError: true,
-        );
-      }
-    } catch (e) {
-      CustomSnackbar.show(
-        'Failed to connect to the server. Please check your internet connection.',
-        isError: true,
-      );
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
+  //       Navigator.push(
+  //         navigatorKey.currentContext!,
+  //         MaterialPageRoute(
+  //           builder: (context) => SignInPage(
+  //               key: UniqueKey(),
+  //               onToggleDarkMode: onToggleDarkMode,
+  //               isDarkMode: isDarkMode),
+  //         ),
+  //       );
+  //       Provider.of<HomePageController>(navigatorKey.currentContext!,
+  //               listen: false)
+  //           .setIsLoggedOut(true);
+  //       notifyListeners();
+  //     } else if (response.statusCode == 401) {
+  //       final String message = responseData['message'] ?? 'Unauthorized';
+  //       CustomSnackbar.show(
+  //         message,
+  //         isError: true,
+  //       );
+  //     } else {
+  //       CustomSnackbar.show(
+  //         'An unexpected error occurred. Please try again.',
+  //         isError: true,
+  //       );
+  //     }
+  //   } catch (e) {
+  //     CustomSnackbar.show(
+  //       'Failed to connect to the server. Please check your internet connection.',
+  //       isError: true,
+  //     );
+  //   } finally {
+  //     _isLoading = false;
+  //     notifyListeners();
+  //   }
+  // }
 
   // Future<void> logoutCall(BuildContext context) async {
   //   _isLoading = true;

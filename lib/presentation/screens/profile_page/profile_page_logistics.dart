@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/widgets/custom_gap.dart';
 import '../../../core/widgets/logout_dialog.dart';
 import '../../controllers/profile_page_controller.dart';
+import '../../controllers/session_controller.dart';
 import '../edit_profile/edit_profile_logistics.dart';
 import '../edit_profile/edit_profile_vendor.dart';
 import 'widgets/profile_options.dart';
@@ -34,6 +35,7 @@ class ProfilePageLogistics extends StatefulWidget {
 class _ProfilePageLogisticsState extends State<ProfilePageLogistics> {
   @override
   Widget build(BuildContext context) {
+    final sessionController = Provider.of<SessionController>(context);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return ChangeNotifierProvider(
       create: (context) => ProfilePageController(
@@ -318,7 +320,11 @@ class _ProfilePageLogisticsState extends State<ProfilePageLogistics> {
                                   img: 'images/Logout2.png',
                                   onTap: () {
                                     showLogoutDialog(
-                                        context, profilePageController.logout);
+                                        context,
+                                        (context) => sessionController.logout(
+                                            context,
+                                            widget.onToggleDarkMode,
+                                            widget.isDarkMode));
                                   },
                                 ),
                               ],

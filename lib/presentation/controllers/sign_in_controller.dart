@@ -11,6 +11,7 @@ import '../screens/main_app/main_app.dart';
 import '../screens/verify_email/verify_email.dart';
 import 'home_page_controller.dart';
 import 'navigation_controller.dart';
+import 'session_controller.dart';
 
 class SignInController extends ChangeNotifier {
   final FocusNode _userNameFocusNode = FocusNode();
@@ -154,9 +155,10 @@ class SignInController extends ChangeNotifier {
         final String accessToken = responseData['data']['accessToken'];
         final String message = responseData['message'];
 
-        await prefs.setString('userName', userName);
         await storage.write(key: 'userRole', value: _selectedRole);
-        await storage.write(key: 'accessToken', value: accessToken);
+        await Provider.of<SessionController>(navigatorKey.currentContext!,
+                listen: false)
+            .saveToken(accessToken);
 
         // Handle the successful response here
         CustomSnackbar.show(

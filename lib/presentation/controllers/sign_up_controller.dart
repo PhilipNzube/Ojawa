@@ -308,7 +308,7 @@ class SignUpController extends ChangeNotifier {
       );
 
       // Navigate to the main app or another page
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => VerifyEmail(
@@ -350,7 +350,7 @@ class SignUpController extends ChangeNotifier {
       notifyListeners();
       // Handle other unexpected responses
       CustomSnackbar.show(
-        'Error: ${responseData['message']}',
+        responseData['message'],
         isError: true,
       );
     }

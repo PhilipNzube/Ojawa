@@ -180,18 +180,33 @@ class SignInController extends ChangeNotifier {
         notifyListeners();
         final Map<String, dynamic> responseData = json.decode(response.body);
         final String error = responseData['message'];
-
-        CustomSnackbar.show(
-          'Error: $error',
-          isError: true,
-        );
+        if (error == "Please verify your email.") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VerifyEmail(
+                  key: UniqueKey(),
+                  onToggleDarkMode: onToggleDarkMode,
+                  isDarkMode: isDarkMode),
+            ),
+          );
+          CustomSnackbar.show(
+            error,
+            isError: true,
+          );
+        } else {
+          CustomSnackbar.show(
+            error,
+            isError: true,
+          );
+        }
       } else {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         _isLoading = false;
         notifyListeners();
 
         CustomSnackbar.show(
-          'Error: ${responseData['message']}',
+          responseData['message'],
           isError: true,
         );
       }

@@ -491,7 +491,7 @@ class HomePageController extends ChangeNotifier {
       } else if (response.statusCode == 400) {
         final String message = responseData['message'] ?? 'Unauthorized';
         CustomSnackbar.show(
-          'Error: $message',
+          message,
           isError: true,
         );
       } else {

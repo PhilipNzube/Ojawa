@@ -260,7 +260,7 @@ class MainAppControllers extends ChangeNotifier {
       } else if (response.statusCode == 401) {
         final String message = responseData['message'] ?? 'Unauthorized';
         CustomSnackbar.show(
-          'Error: $message',
+          message,
           isError: true,
         );
       } else {

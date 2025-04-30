@@ -178,7 +178,7 @@ class SignInController extends ChangeNotifier {
         final String error = responseData['message'];
 
         CustomSnackbar.show(
-          'Error: $error',
+          error,
           isError: true,
         );
       } else {

@@ -86,7 +86,7 @@ class ForgotPasswordPageController extends ChangeNotifier {
     } else {
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       CustomSnackbar.show(
-        'Error: ${responseData['message']}',
+        responseData['message'],
         isError: true,
       );
     }
@@ -175,7 +175,7 @@ class ForgotPasswordPageController extends ChangeNotifier {
     } else {
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       CustomSnackbar.show(
-        'Error: ${responseData['message']}',
+        responseData['message'],
         isError: true,
       );
     }

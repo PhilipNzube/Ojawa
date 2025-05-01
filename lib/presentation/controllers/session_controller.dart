@@ -59,7 +59,6 @@ class SessionController extends ChangeNotifier {
 
   Future<void> saveToken(String token, String selectedRole) async {
     await initializePrefs();
-    await storage.write(key: 'accessToken', value: token);
     _decodedToken = JwtDecoder.decode(token);
     _isAuthenticated = true;
     print('Decoded JWT Payload: $_decodedToken');
@@ -71,6 +70,8 @@ class SessionController extends ChangeNotifier {
         .toList();
 
     if (formattedRoles.contains(selectedRole)) {
+      await storage.write(key: 'accessToken', value: token);
+
       final userInfo = UserInfo.fromDecodedToken(_decodedToken!, selectedRole);
 
       for (var entry in userInfo.toPrefsMap().entries) {
@@ -80,6 +81,8 @@ class SessionController extends ChangeNotifier {
       print(
           "Saved user info → ${userInfo.username}, ${userInfo.email}, $selectedRole");
     } else {
+      await storage.delete(key: 'accessToken');
+
       CustomSnackbar.show(
           'You do not have permission to use the selected role. Please choose a valid role assigned to your account.',
           isError: true);

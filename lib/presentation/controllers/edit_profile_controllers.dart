@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/widgets/custom_snackbar.dart';
 import '../../main.dart';
 import 'home_page_controller.dart';
+import 'session_controller.dart';
 
 class EditProfileControllers extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
@@ -153,11 +154,13 @@ class EditProfileControllers extends ChangeNotifier {
 
   Future<void> initializePrefs() async {
     prefs = await SharedPreferences.getInstance();
-    String? savedRole = await storage.read(key: 'userRole');
-    if (savedRole != null) {
-      _userRole = savedRole;
-      notifyListeners();
-    }
+    final session = Provider.of<SessionController>(navigatorKey.currentContext!,
+        listen: false);
+    final userInfo = await session.getUserInfo(prefs);
+
+    _userRole =
+        userInfo.selectedRole.isNotEmpty ? userInfo.selectedRole : "Customer";
+    notifyListeners();
   }
 
   Future<void> fetchUserProfile() async {

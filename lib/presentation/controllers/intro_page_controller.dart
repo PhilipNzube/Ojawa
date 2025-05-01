@@ -1,7 +1,9 @@
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart' hide CarouselController;
+import 'package:provider/provider.dart';
 
 import '../screens/main_app/main_app.dart';
+import 'session_controller.dart';
 
 class IntroPageController extends ChangeNotifier {
   List<String> _imagePaths = [
@@ -51,6 +53,7 @@ class IntroPageController extends ChangeNotifier {
   }
 
   void initialize(BuildContext context) {
+    Provider.of<SessionController>(context, listen: false).initializeSession();
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,

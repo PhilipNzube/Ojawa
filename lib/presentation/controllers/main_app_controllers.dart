@@ -38,7 +38,6 @@ class MainAppControllers extends ChangeNotifier {
 
   MainAppControllers(
       {required this.onToggleDarkMode, required this.isDarkMode}) {
-    initializePrefs();
     initialize();
   }
 
@@ -51,23 +50,23 @@ class MainAppControllers extends ChangeNotifier {
   String get userRole => _userRole;
 
   void initialize() async {
-    if (!Provider.of<SessionController>(navigatorKey.currentContext!,
-            listen: false)
-        .isAuthenticated) {
-      Navigator.push(
-        navigatorKey.currentContext!,
-        MaterialPageRoute(
-          builder: (context) => SignInPage(
-              key: UniqueKey(),
-              onToggleDarkMode: onToggleDarkMode,
-              isDarkMode: isDarkMode),
-        ),
-      );
-      CustomSnackbar.show(
-        'You have been logged out. Session expired',
-        isError: true,
-      );
-    }
+    // if (!Provider.of<SessionController>(navigatorKey.currentContext!,
+    //         listen: false)
+    //     .isAuthenticated) {
+    //   Navigator.push(
+    //     navigatorKey.currentContext!,
+    //     MaterialPageRoute(
+    //       builder: (context) => SignInPage(
+    //           key: UniqueKey(),
+    //           onToggleDarkMode: onToggleDarkMode,
+    //           isDarkMode: isDarkMode),
+    //     ),
+    //   );
+    //   CustomSnackbar.show(
+    //     'You have been logged out. Session expired',
+    //     isError: true,
+    //   );
+    // }
     connectivitySubscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
@@ -76,25 +75,18 @@ class MainAppControllers extends ChangeNotifier {
       }
     });
     // fetchUserProfile();
+    await initializePrefs();
   }
 
   Future<void> initializePrefs() async {
-    String? savedRole = await storage.read(key: 'userRole');
-    if (savedRole != null) {
-      _userRole = savedRole;
-      //_userRole = "Vendor";
-      notifyListeners();
-      // print("From MainAppController: Done");
-      // CustomSnackbar.show(
-      //   'From MainAppController: Done',
-      // );
-    } else {
-      _userRole = "Customer";
-      notifyListeners();
-      // CustomSnackbar.show(
-      //   'From MainAppController: Not Done',
-      // );
-    }
+    prefs = await SharedPreferences.getInstance();
+    final session = Provider.of<SessionController>(navigatorKey.currentContext!,
+        listen: false);
+    final userInfo = await session.getUserInfo(prefs);
+
+    _userRole =
+        userInfo.selectedRole.isNotEmpty ? userInfo.selectedRole : "Customer";
+    notifyListeners();
   }
 
   Future<int?> getUserId() async {

@@ -86,7 +86,14 @@ class MyApp extends StatelessWidget {
             create: (_) => ManagePickupLocationControllers()),
         ChangeNotifierProvider(create: (_) => AddPickupLocationControllers()),
         ChangeNotifierProvider(
-            create: (_) => SessionController()..initializeSession()),
+          create: (context) {
+            final themeController =
+                Provider.of<ThemeController>(context, listen: false);
+            return SessionController(
+                onToggleDarkMode: themeController.toggleDarkMode,
+                isDarkMode: themeController.isDarkMode);
+          },
+        ),
       ],
       child: Consumer<ThemeController>(
         builder: (context, themeController, child) {

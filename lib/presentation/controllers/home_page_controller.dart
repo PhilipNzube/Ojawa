@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart' hide CarouselController;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -17,6 +18,7 @@ import '../screens/auth/sign_in_page.dart';
 
 import '../screens/intro_page/intro_page.dart';
 import '../screens/my_cart/my_cart.dart';
+import 'session_controller.dart';
 
 class HomePageController extends ChangeNotifier {
   final TextEditingController _searchController = TextEditingController();
@@ -158,7 +160,7 @@ class HomePageController extends ChangeNotifier {
         .listen((ConnectivityResult result) {
       if (result != ConnectivityResult.none) {
         // _userData = fetchUserProfile();
-        fetchUserProfile();
+        //fetchUserProfile();
         if (products.isEmpty) {
           fetchProducts(overwrite: true);
         }
@@ -168,17 +170,36 @@ class HomePageController extends ChangeNotifier {
         11 * 3600 + 15 * 60 + 4; // Example: 11 hours, 15 minutes, 4 seconds
     _startTimer();
     // _userData = fetchUserProfile();
-    fetchUserProfile();
+    //fetchUserProfile();
     fetchProducts(overwrite: true);
   }
 
   Future<void> initializePrefs() async {
     prefs = await SharedPreferences.getInstance();
-    String? savedRole = await storage.read(key: 'userRole');
-    if (savedRole != null) {
-      _userRole = savedRole;
+    final session = Provider.of<SessionController>(navigatorKey.currentContext!,
+        listen: false);
+    final userInfo = await session.getUserInfo(prefs);
+
+    _userRole =
+        userInfo.selectedRole.isNotEmpty ? userInfo.selectedRole : "Customer";
+    if (_userRole == "Customer") {
+      _userName = userInfo.username;
+      _email = userInfo.email;
+      _phone = userInfo.phone;
+
+      notifyListeners();
+    } else if (_userRole == "Vendor") {
+      _userName = userInfo.username;
+      _email = userInfo.email;
+      _phone = userInfo.phone;
+      notifyListeners();
+    } else if (_userRole == "Logistics") {
+      _userName = userInfo.username;
+      _email = userInfo.email;
+      _phone = userInfo.phone;
       notifyListeners();
     }
+    notifyListeners();
   }
 
   Future<bool> checkForToken() async {
@@ -303,105 +324,6 @@ class HomePageController extends ChangeNotifier {
       print('Error retrieving userId: $error');
     }
     return null; // Return null if userId is not found or an error occurs
-  }
-
-  Future<void> fetchUserProfile() async {
-    _isLoading = true;
-    notifyListeners();
-    final String? accessToken = await storage.read(
-        key: 'accessToken'); // Use the correct key for access token
-    if (accessToken == null) {
-      CustomSnackbar.show(
-        'You are not logged in.',
-        isError: true,
-      );
-      _isLoggedOut = true;
-      _isLoading = false;
-      notifyListeners();
-      return;
-    }
-    if (_userRole == "Customer") {
-      _url = "customer";
-      notifyListeners();
-    } else if (_userRole == "Vendor") {
-      _url = "vendors";
-      notifyListeners();
-    } else if (_userRole == "Logistics") {
-      _url = "logistics";
-      notifyListeners();
-    }
-    userId =
-        await getUserId(); // Assuming this retrieves the userId from Flutter Secure Storage
-    final url =
-        'https://ojawa-api.onrender.com/api/Users/$_url/$userId'; // Update the URL to the correct endpoint
-
-    try {
-      final response = await http.get(
-        Uri.parse(url),
-        headers: {
-          'Accept': 'text/plain',
-          'Authorization': 'Bearer $accessToken',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        _isLoggedOut = false;
-        notifyListeners();
-        final responseData = json.decode(response.body);
-
-        // Access the user data from the nested "data" key
-        final userData = responseData['data'];
-        if (_userRole == "Customer") {
-          _userName = userData['username'];
-          _email = userData['email'];
-          _state = userData['state'];
-          _phone = userData['phone'];
-          _gender = userData['gender'];
-          notifyListeners();
-        } else if (_userRole == "Vendor") {
-          _fullName = userData['fullName'];
-          _userName = userData['username'];
-          _email = userData['email'];
-          _phone = userData['phone'];
-          _address = userData['address'];
-          _city = userData['city'];
-          _state = userData['state'];
-          _storeName = userData['storeName'];
-          _storeWebsiteUrl = userData['storeWebsiteUrl'];
-          _storeDescription = userData['storeDescription'];
-          _walletBalance = userData['walletBalance'].toString();
-          notifyListeners();
-        } else if (_userRole == "Logistics") {
-          _fullName = userData['fullName'];
-          _email = userData['email'];
-          _phone = userData['phone'];
-          _walletBalance = userData['walletBalance'].toString();
-          notifyListeners();
-        }
-        _role = userData['role'];
-        final profilePictureUrl =
-            userData['profilePictureUrl']?.toString().trim();
-
-        _profileImage =
-            (profilePictureUrl != null && profilePictureUrl.isNotEmpty)
-                ? '$profilePictureUrl/download?project=66e4476900275deffed4'
-                : '';
-        _isLoading = false;
-        notifyListeners();
-        print("Profile Loaded: ${response.body}");
-        print("Profile Image URL: $_profileImage");
-      } else {
-        print('Error fetching profile: ${response.statusCode}');
-
-        _isLoading = false; // Set loading to false on error
-        notifyListeners();
-      }
-    } catch (error) {
-      print('Error: $error');
-
-      _isLoading = false; // Set loading to false on exception
-      notifyListeners();
-    }
   }
 
   Future<void> performSearch(String query) async {
@@ -642,7 +564,7 @@ class HomePageController extends ChangeNotifier {
           throw TimeoutException('The operation took too long.');
         }),
         // _userData = fetchUserProfile();
-        fetchUserProfile(),
+        //fetchUserProfile(),
         fetchProducts(overwrite: true),
       ]);
     } catch (e) {

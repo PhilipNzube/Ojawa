@@ -294,7 +294,7 @@ class SignUpController extends ChangeNotifier {
       final String accessToken = responseData['data']['accessToken'];
       final String message = responseData['message'];
 
-      await storage.write(key: 'userRole', value: _selectedRole);
+      //await storage.write(key: 'userRole', value: _selectedRole);
       await storage.write(key: 'accessToken', value: accessToken);
 
       // Handle successful response

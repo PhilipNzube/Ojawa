@@ -9,6 +9,7 @@ import '../../core/widgets/custom_snackbar.dart';
 import '../screens/auth/sign_up_page.dart';
 import '../screens/main_app/main_app.dart';
 import 'session_controller.dart';
+import 'sign_up_controller.dart';
 
 class VerifyOtpController extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
@@ -113,8 +114,12 @@ class VerifyOtpController extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final String message = responseData['message'];
-        await Provider.of<SessionController>(context, listen: false)
-            .saveToken(accessToken!);
+        await Provider.of<SessionController>(context, listen: false).saveToken(
+            accessToken!,
+            Provider.of<SignUpController>(
+              context,
+              listen: false,
+            ).selectedRole);
 
         CustomSnackbar.show(
           message,

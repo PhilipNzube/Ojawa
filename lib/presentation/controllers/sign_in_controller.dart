@@ -48,6 +48,7 @@ class SignInController extends ChangeNotifier {
   TextEditingController get roleController => _roleController;
   bool get isLoading => _isLoading;
   bool get rememberMe => _rememberMe;
+  String get selectedRole => _selectedRole;
 
   void setRemberMe(bool value) async {
     _rememberMe = value;
@@ -70,20 +71,20 @@ class SignInController extends ChangeNotifier {
     prefs = await SharedPreferences.getInstance();
     _rememberMe = prefs.getBool('rememberMe') ?? false;
     notifyListeners();
-    String? savedUserName = prefs.getString('userName');
-    String? savedRole = await storage.read(key: 'userRole');
 
-    if (_rememberMe == true) {
-      if (savedUserName != null) {
-        _userNameController.text = savedUserName;
-        notifyListeners();
-      }
+    final session = Provider.of<SessionController>(
+      navigatorKey.currentContext!,
+      listen: false,
+    );
+    final userInfo = await session.getUserInfo(prefs);
 
-      if (savedRole != null) {
-        _roleController.text = savedRole;
-        _selectedRole = savedRole;
-        notifyListeners();
-      }
+    _roleController.text = userInfo.selectedRole;
+    _selectedRole = userInfo.selectedRole;
+    notifyListeners();
+
+    if (_rememberMe == true && userInfo.email.isNotEmpty) {
+      _emailController.text = userInfo.email;
+      notifyListeners();
     }
   }
 
@@ -155,10 +156,10 @@ class SignInController extends ChangeNotifier {
         final String accessToken = responseData['data']['accessToken'];
         final String message = responseData['message'];
 
-        await storage.write(key: 'userRole', value: _selectedRole);
+        //await storage.write(key: 'userRole', value: _selectedRole);
         await Provider.of<SessionController>(navigatorKey.currentContext!,
                 listen: false)
-            .saveToken(accessToken);
+            .saveToken(accessToken, _selectedRole);
 
         // Handle the successful response here
         CustomSnackbar.show(

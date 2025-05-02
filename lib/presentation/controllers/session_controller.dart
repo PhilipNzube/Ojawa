@@ -12,6 +12,7 @@ import '../../main.dart';
 import '../screens/auth/sign_in_page.dart';
 import '../screens/intro_page/intro_page.dart';
 import 'home_page_controller.dart';
+import 'navigation_controller.dart';
 
 class SessionController extends ChangeNotifier {
   final FlutterSecureStorage storage = const FlutterSecureStorage();
@@ -200,11 +201,22 @@ class SessionController extends ChangeNotifier {
   }
 
   Future<void> _clearUserSession() async {
-    await prefs.clear();
+    //await prefs.clear();
+    await prefs.remove('user_first_name');
+    await prefs.remove('user_last_name');
+    await prefs.remove('user_email');
+    await prefs.remove('user_phone');
+    await prefs.remove('user_country');
+    await prefs.remove('user_roles');
+    await prefs.remove('user_selected_role');
+    await prefs.remove('user_username');
     await storage.deleteAll();
     _decodedToken = null;
     _isAuthenticated = false;
     notifyListeners();
+    Provider.of<NavigationController>(navigatorKey.currentContext!,
+            listen: false)
+        .setSelectedIndex(0);
     Provider.of<HomePageController>(navigatorKey.currentContext!, listen: false)
         .setIsLoggedOut(true);
   }

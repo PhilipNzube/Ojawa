@@ -72,22 +72,10 @@ class SignInController extends ChangeNotifier {
     _rememberMe = prefs.getBool('rememberMe') ?? false;
     notifyListeners();
 
-    final session = Provider.of<SessionController>(
-      navigatorKey.currentContext!,
-      listen: false,
-    );
-    final userInfo = await session.getUserInfo(prefs);
-
-    _roleController.text = userInfo.selectedRole.isNotEmpty
-        ? userInfo.selectedRole
-        : "Select Role";
-    _selectedRole = userInfo.selectedRole.isNotEmpty
-        ? userInfo.selectedRole
-        : "Select Role";
-    notifyListeners();
-
-    if (_rememberMe == true && userInfo.email.isNotEmpty) {
-      _emailController.text = userInfo.email;
+    if (_rememberMe == true) {
+      _emailController.text = prefs.getString('form_email') ?? "";
+      _roleController.text = prefs.getString('form_role') ?? "Select Role";
+      _selectedRole = prefs.getString('form_role') ?? "Select Role";
       notifyListeners();
     }
   }
@@ -162,6 +150,10 @@ class SignInController extends ChangeNotifier {
         final String message = responseData['message'];
 
         //await storage.write(key: 'userRole', value: _selectedRole);
+        if (_rememberMe == true) {
+          await prefs.setString('form_email', email);
+          await prefs.setString('form_role', _selectedRole);
+        }
         await Provider.of<SessionController>(navigatorKey.currentContext!,
                 listen: false)
             .saveToken(accessToken, _selectedRole);

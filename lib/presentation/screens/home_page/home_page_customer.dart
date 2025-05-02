@@ -1303,11 +1303,13 @@ class _HomePageCustomerState extends State<HomePageCustomer>
               if (Provider.of<SessionController>(navigatorKey.currentContext!,
                           listen: false)
                       .isAuthenticated ==
-                  true)
-                if (Provider.of<SignInController>(context, listen: false)
+                  true) ...[
+                if (Provider.of<SignInController>(navigatorKey.currentContext!,
+                                listen: false)
                             .selectedRole !=
                         "Customer" ||
-                    Provider.of<SignUpController>(context, listen: false)
+                    Provider.of<SignUpController>(navigatorKey.currentContext!,
+                                listen: false)
                             .selectedRole !=
                         "Customer")
                   RoleSwitcherFab(
@@ -1320,6 +1322,7 @@ class _HomePageCustomerState extends State<HomePageCustomer>
                               widget.onToggleDarkMode, widget.isDarkMode);
                     },
                   ),
+              ],
             ],
           ),
         );

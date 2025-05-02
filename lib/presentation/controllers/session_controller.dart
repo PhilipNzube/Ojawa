@@ -51,12 +51,12 @@ class SessionController extends ChangeNotifier {
       _isAuthenticated = true;
       print('Decoded JWT Payload: $_decodedToken');
       await _saveUserInfoFromToken();
-    } else {
+    } else if (token != null && JwtDecoder.isExpired(token)) {
       await logoutAndRedirect(
           message: 'You have been logged out. Session expired');
+    } else {
+      CustomSnackbar.show('You are not logged in.', isError: true);
     }
-
-    notifyListeners();
   }
 
   Future<void> saveToken(String token, String selectedRole) async {
@@ -132,7 +132,6 @@ class SessionController extends ChangeNotifier {
   Future<void> logout(BuildContext context, Function(bool) onToggleDarkMode,
       bool isDarkMode) async {
     final String? accessToken = await storage.read(key: 'accessToken');
-    Navigator.pop(navigatorKey.currentContext!);
 
     if (accessToken == null) {
       CustomSnackbar.show('You are not logged in.', isError: true);
@@ -210,10 +209,13 @@ class SessionController extends ChangeNotifier {
     await prefs.remove('user_roles');
     await prefs.remove('user_selected_role');
     await prefs.remove('user_username');
+    await prefs.remove('activateFabForCustomerView');
     await storage.deleteAll();
     _decodedToken = null;
     _isAuthenticated = false;
     notifyListeners();
+    Provider.of<HomePageController>(navigatorKey.currentContext!, listen: false)
+        .setActivateFabForCustomerView(false);
     Provider.of<NavigationController>(navigatorKey.currentContext!,
             listen: false)
         .setSelectedIndex(0);

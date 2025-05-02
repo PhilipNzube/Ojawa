@@ -514,7 +514,8 @@ class _HomePageLogisticsState extends State<HomePageLogistics>
                       .setPreviousRole("Logistics");
                   Provider.of<HomePageController>(navigatorKey.currentContext!,
                           listen: false)
-                      .switchRole(widget.onToggleDarkMode, widget.isDarkMode);
+                      .switchRole(
+                          true, widget.onToggleDarkMode, widget.isDarkMode);
                 },
               ),
             ],

@@ -19,7 +19,6 @@ class _RoleSwitcherFabState extends State<RoleSwitcherFab> {
   bool isLoading = false;
   Offset _fabPosition = Offset.zero;
   final GlobalKey<TooltipState> _tooltipKey = GlobalKey<TooltipState>();
-  String _currentRole = "Customer";
 
   @override
   void initState() {
@@ -91,8 +90,8 @@ class _RoleSwitcherFabState extends State<RoleSwitcherFab> {
                   ),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.005),
-                Text(
-                  _currentRole,
+                const Text(
+                  "Customer",
                   textAlign: TextAlign.center,
                   softWrap: true,
                   style: const TextStyle(

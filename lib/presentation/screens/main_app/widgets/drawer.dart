@@ -116,7 +116,10 @@ class MainAppDrawer extends StatelessWidget {
                 context,
                 title: 'Log out',
                 imagePath: 'images/Logout.png',
-                onTap: () => showLogoutDialog(context),
+                onTap: () {
+                  Navigator.pop(context);
+                  showLogoutDialog(context);
+                },
               ),
             ],
           ),

@@ -70,6 +70,7 @@ class HomePageController extends ChangeNotifier {
   bool _isLoggedOut = false;
   String _previousRole = "Customer";
   String _currentRole = "Customer";
+  bool _activateFabForCustomerView = false;
   // late Future<void> _userData;
 
   HomePageController() {
@@ -108,6 +109,7 @@ class HomePageController extends ChangeNotifier {
   bool get isLoggedOut => _isLoggedOut;
   String get previousRole => _previousRole;
   String get currentRole => _currentRole;
+  bool get activateFabForCustomerView => _activateFabForCustomerView;
   // Future<void> get userData => _userData;
 
   TextEditingController get searchController => _searchController;
@@ -115,6 +117,11 @@ class HomePageController extends ChangeNotifier {
   ScrollController get scrollController => _scrollController;
 
   FocusNode get searchFocusNode => _searchFocusNode;
+
+  void setActivateFabForCustomerView(bool value) {
+    _activateFabForCustomerView = value;
+    notifyListeners();
+  }
 
   void setCurrentRole(String value) {
     _currentRole = value;
@@ -190,6 +197,8 @@ class HomePageController extends ChangeNotifier {
 
   Future<void> initializePrefs() async {
     prefs = await SharedPreferences.getInstance();
+    _activateFabForCustomerView =
+        prefs.getBool('activateFabForCustomerView') ?? false;
     final session = Provider.of<SessionController>(navigatorKey.currentContext!,
         listen: false);
     final userInfo = await session.getUserInfo(prefs);
@@ -625,12 +634,15 @@ class HomePageController extends ChangeNotifier {
     );
   }
 
-  void switchRole(
+  void switchRole(bool activateFabForCustomerView,
       dynamic Function(bool) onToggleDarkMode, bool isDarkMode) async {
+    _activateFabForCustomerView = activateFabForCustomerView;
+    await prefs.setBool(
+        'activateFabForCustomerView', _activateFabForCustomerView);
     print("$_currentRole, $_previousRole");
     await prefs.setString('user_selected_role', _currentRole);
 
-    Navigator.push(
+    Navigator.pushReplacement(
       navigatorKey.currentContext!,
       MaterialPageRoute(
         builder: (context) => IntroPage(

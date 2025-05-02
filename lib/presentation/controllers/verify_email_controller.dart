@@ -20,6 +20,12 @@ class VerifyEmailController extends ChangeNotifier {
 
   String phoneNumber = '';
 
+  final String email;
+
+  VerifyEmailController({required this.email}) {
+    _emailController.text = email;
+  }
+
   //public getters
   bool get isLoading => _isLoading;
   int? get selectedRadioValue => _selectedRadioValue;
@@ -41,11 +47,10 @@ class VerifyEmailController extends ChangeNotifier {
       context,
       MaterialPageRoute(
         builder: (context) => VerifyOtp(
-          key: UniqueKey(),
-          onToggleDarkMode: onToggleDarkMode,
-          isDarkMode: isDarkMode,
-          email: emailController.text.trim(),
-        ),
+            key: UniqueKey(),
+            onToggleDarkMode: onToggleDarkMode,
+            isDarkMode: isDarkMode,
+            email: emailController.text.trim()),
       ),
     );
     _isLoading = false;

@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../../presentation/controllers/home_page_controller.dart';
-import 'custom_snackbar.dart';
 
 class RoleSwitcherFab extends StatefulWidget {
+  final bool isCustomersView;
   final void Function()? onPressed;
 
   const RoleSwitcherFab({
     super.key,
     required this.onPressed,
+    this.isCustomersView = false,
   });
 
   @override
@@ -21,6 +19,7 @@ class _RoleSwitcherFabState extends State<RoleSwitcherFab> {
   bool isLoading = false;
   Offset _fabPosition = Offset.zero;
   final GlobalKey<TooltipState> _tooltipKey = GlobalKey<TooltipState>();
+  String _currentRole = "Customer";
 
   @override
   void initState() {
@@ -33,7 +32,6 @@ class _RoleSwitcherFabState extends State<RoleSwitcherFab> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
     // Set the initial position of the FAB to the bottom-right corner of the screen
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -77,33 +75,46 @@ class _RoleSwitcherFabState extends State<RoleSwitcherFab> {
                     ? const CircularProgressIndicator(
                         color: Colors.white,
                       )
-                    : const Icon(Icons.shopping_bag_outlined,
-                        color: Colors.white),
+                    : const Icon(Icons.swap_horiz, color: Colors.white),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.005),
-              const Text(
-                'Browse as',
-                textAlign: TextAlign.center,
-                softWrap: true,
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12.0,
-                  color: Colors.black,
+              if (widget.isCustomersView == false) ...[
+                const Text(
+                  'Browse as',
+                  textAlign: TextAlign.center,
+                  softWrap: true,
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12.0,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.005),
-              const Text(
-                'Customer',
-                textAlign: TextAlign.center,
-                softWrap: true,
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12.0,
-                  color: Colors.black,
+                SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+                Text(
+                  _currentRole,
+                  textAlign: TextAlign.center,
+                  softWrap: true,
+                  style: const TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12.0,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
+              ] else ...[
+                const Text(
+                  'Switch Back',
+                  textAlign: TextAlign.center,
+                  softWrap: true,
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12.0,
+                    color: Colors.black,
+                  ),
+                ),
+              ]
             ],
           ),
         ),

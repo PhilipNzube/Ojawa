@@ -508,8 +508,13 @@ class _HomePageLogisticsState extends State<HomePageLogistics>
                 onPressed: () {
                   Provider.of<HomePageController>(navigatorKey.currentContext!,
                           listen: false)
-                      .switchRoleToCustomer(
-                          widget.onToggleDarkMode, widget.isDarkMode);
+                      .setCurrentRole("Customer");
+                  Provider.of<HomePageController>(navigatorKey.currentContext!,
+                          listen: false)
+                      .setPreviousRole("Logistics");
+                  Provider.of<HomePageController>(navigatorKey.currentContext!,
+                          listen: false)
+                      .switchRole(widget.onToggleDarkMode, widget.isDarkMode);
                 },
               ),
             ],

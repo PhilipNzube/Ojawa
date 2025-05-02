@@ -59,19 +59,27 @@ class VerifyOtpController extends ChangeNotifier {
       print("$email,$_otpCode");
 
       if (response.statusCode == 200) {
+        final String accessToken = responseData['data']['accessToken'];
         final String message = responseData['message'];
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MainApp(
-                key: UniqueKey(),
-                onToggleDarkMode: onToggleDarkMode,
-                isDarkMode: isDarkMode),
-          ),
-        );
-        CustomSnackbar.show(
-          message,
-        );
+        await Provider.of<SessionController>(context, listen: false).saveToken(
+            accessToken,
+            Provider.of<SignUpController>(context, listen: false).selectedRole);
+        if (Provider.of<SessionController>(context, listen: false)
+                .isAuthenticated ==
+            true) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MainApp(
+                  key: UniqueKey(),
+                  onToggleDarkMode: onToggleDarkMode,
+                  isDarkMode: isDarkMode),
+            ),
+          );
+          CustomSnackbar.show(
+            message,
+          );
+        }
       } else if (response.statusCode == 400) {
         _isLoading = false;
         notifyListeners();

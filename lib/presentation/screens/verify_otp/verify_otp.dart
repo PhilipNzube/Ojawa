@@ -89,6 +89,7 @@ class VerifyOtpState extends State<VerifyOtp> {
                         SizedBox(
                             height: MediaQuery.of(context).size.height * 0.1),
                         OtpTextField(
+                          keyboardType: TextInputType.text,
                           numberOfFields: 6,
                           fieldWidth: (50 / MediaQuery.of(context).size.width) *
                               MediaQuery.of(context).size.width,

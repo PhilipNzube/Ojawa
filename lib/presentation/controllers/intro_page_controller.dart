@@ -53,7 +53,7 @@ class IntroPageController extends ChangeNotifier {
   }
 
   void initialize(BuildContext context) {
-    Provider.of<SessionController>(context, listen: false).initializeSession();
+    // Provider.of<SessionController>(context, listen: false).initializeSession();
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,

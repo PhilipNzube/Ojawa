@@ -6,6 +6,9 @@ import '../../../core/widgets/custom_error_message.dart';
 import '../../../core/widgets/product.dart';
 import '../../../core/widgets/role_switcher_fab.dart';
 import '../../controllers/home_page_controller.dart';
+import '../../controllers/session_controller.dart';
+import '../../controllers/sign_in_controller.dart';
+import '../../controllers/sign_up_controller.dart';
 import '../top_categories_details/top_categories_details.dart';
 import 'widgets/bottom_sheets/sort_by_sheet.dart';
 import 'widgets/category.dart';
@@ -1297,14 +1300,26 @@ class _HomePageCustomerState extends State<HomePageCustomer>
                     ),
                   ),
                 ),
-              // RoleSwitcherFab(
-              //   onPressed: () {
-              //     Provider.of<HomePageController>(navigatorKey.currentContext!,
-              //             listen: false)
-              //         .switchRoleToCustomer(
-              //             widget.onToggleDarkMode, widget.isDarkMode);
-              //   },
-              // ),
+              if (Provider.of<SessionController>(navigatorKey.currentContext!,
+                          listen: false)
+                      .isAuthenticated ==
+                  true)
+                if (Provider.of<SignInController>(context, listen: false)
+                            .selectedRole !=
+                        "Customer" ||
+                    Provider.of<SignUpController>(context, listen: false)
+                            .selectedRole !=
+                        "Customer")
+                  RoleSwitcherFab(
+                    isCustomersView: true,
+                    onPressed: () {
+                      Provider.of<HomePageController>(
+                              navigatorKey.currentContext!,
+                              listen: false)
+                          .switchRole(
+                              widget.onToggleDarkMode, widget.isDarkMode);
+                    },
+                  ),
             ],
           ),
         );

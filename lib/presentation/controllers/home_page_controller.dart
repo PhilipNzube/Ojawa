@@ -68,6 +68,8 @@ class HomePageController extends ChangeNotifier {
   String _url = "";
   bool _isMoved = false;
   bool _isLoggedOut = false;
+  String _previousRole = "Customer";
+  String _currentRole = "Customer";
   // late Future<void> _userData;
 
   HomePageController() {
@@ -104,6 +106,8 @@ class HomePageController extends ChangeNotifier {
   String get userRole => _userRole;
   bool get isMoved => _isMoved;
   bool get isLoggedOut => _isLoggedOut;
+  String get previousRole => _previousRole;
+  String get currentRole => _currentRole;
   // Future<void> get userData => _userData;
 
   TextEditingController get searchController => _searchController;
@@ -111,6 +115,16 @@ class HomePageController extends ChangeNotifier {
   ScrollController get scrollController => _scrollController;
 
   FocusNode get searchFocusNode => _searchFocusNode;
+
+  void setCurrentRole(String value) {
+    _currentRole = value;
+    notifyListeners();
+  }
+
+  void setPreviousRole(String value) {
+    _previousRole = value;
+    notifyListeners();
+  }
 
   void refreshController() {
     notifyListeners();
@@ -611,13 +625,10 @@ class HomePageController extends ChangeNotifier {
     );
   }
 
-  void switchRoleToCustomer(
+  void switchRole(
       dynamic Function(bool) onToggleDarkMode, bool isDarkMode) async {
-    await storage.delete(key: 'userRole');
-    await storage.delete(key: 'accessToken');
-    await storage.delete(key: 'userId');
-    await prefs.remove('userName');
-    // await prefs.remove('user');
+    print("$_currentRole, $_previousRole");
+    await prefs.setString('user_selected_role', _currentRole);
 
     Navigator.push(
       navigatorKey.currentContext!,
@@ -629,10 +640,11 @@ class HomePageController extends ChangeNotifier {
       ),
     );
     CustomSnackbar.show(
-      'Now browsing as a customer. Some features require signup.',
+      'Now browsing as a $_currentRole',
     );
     _isLoggedOut = true;
     _isLoading = false;
+    _currentRole = _previousRole;
     notifyListeners();
   }
 

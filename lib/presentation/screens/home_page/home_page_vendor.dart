@@ -919,8 +919,13 @@ class _HomePageVendorState extends State<HomePageVendor>
                 onPressed: () {
                   Provider.of<HomePageController>(navigatorKey.currentContext!,
                           listen: false)
-                      .switchRoleToCustomer(
-                          widget.onToggleDarkMode, widget.isDarkMode);
+                      .setCurrentRole("Customer");
+                  Provider.of<HomePageController>(navigatorKey.currentContext!,
+                          listen: false)
+                      .setPreviousRole("Vendor");
+                  Provider.of<HomePageController>(navigatorKey.currentContext!,
+                          listen: false)
+                      .switchRole(widget.onToggleDarkMode, widget.isDarkMode);
                 },
               ),
             ],

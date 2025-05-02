@@ -10,6 +10,7 @@ import '../../core/widgets/custom_snackbar.dart';
 import '../../data/model/user_info.dart';
 import '../../main.dart';
 import '../screens/auth/sign_in_page.dart';
+import '../screens/intro_page/intro_page.dart';
 import 'home_page_controller.dart';
 
 class SessionController extends ChangeNotifier {
@@ -24,17 +25,17 @@ class SessionController extends ChangeNotifier {
   final Function(bool) onToggleDarkMode;
   final bool isDarkMode;
 
-  // SessionController({
-  //   required this.onToggleDarkMode,
-  //   required this.isDarkMode,
-  // }) {
-  //   initializeSession();
-  // }
-
   SessionController({
     required this.onToggleDarkMode,
     required this.isDarkMode,
-  });
+  }) {
+    initializeSession();
+  }
+
+  // SessionController({
+  //   required this.onToggleDarkMode,
+  //   required this.isDarkMode,
+  // });
 
   Future<void> initializePrefs() async {
     prefs = await SharedPreferences.getInstance();
@@ -60,7 +61,6 @@ class SessionController extends ChangeNotifier {
   Future<void> saveToken(String token, String selectedRole) async {
     await initializePrefs();
     _decodedToken = JwtDecoder.decode(token);
-    _isAuthenticated = true;
     print('Decoded JWT Payload: $_decodedToken');
 
     final rawRoles = List<String>.from(_decodedToken?['roles'] ?? []);
@@ -70,6 +70,7 @@ class SessionController extends ChangeNotifier {
         .toList();
 
     if (formattedRoles.contains(selectedRole)) {
+      _isAuthenticated = true;
       await storage.write(key: 'accessToken', value: token);
 
       final userInfo = UserInfo.fromDecodedToken(_decodedToken!, selectedRole);
@@ -87,7 +88,6 @@ class SessionController extends ChangeNotifier {
           'You do not have permission to use the selected role. Please choose a valid role assigned to your account.',
           isError: true);
       print('Selected role "$selectedRole" not found in user roles');
-      return;
     }
 
     notifyListeners();
@@ -187,16 +187,16 @@ class SessionController extends ChangeNotifier {
       CustomSnackbar.show(message, isError: true);
     }
 
-    // Navigator.pushReplacement(
-    //   navigatorKey.currentContext!,
-    //   MaterialPageRoute(
-    //     builder: (_) => SignInPage(
-    //       key: UniqueKey(),
-    //       onToggleDarkMode: onToggleDarkMode,
-    //       isDarkMode: isDarkMode,
-    //     ),
-    //   ),
-    // );
+    Navigator.pushReplacement(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+        builder: (_) => IntroPage(
+          key: UniqueKey(),
+          onToggleDarkMode: onToggleDarkMode,
+          isDarkMode: isDarkMode,
+        ),
+      ),
+    );
   }
 
   Future<void> _clearUserSession() async {
@@ -205,11 +205,20 @@ class SessionController extends ChangeNotifier {
     _decodedToken = null;
     _isAuthenticated = false;
     notifyListeners();
+    Provider.of<HomePageController>(navigatorKey.currentContext!, listen: false)
+        .setIsLoggedOut(true);
   }
 
   bool isTokenExpired() {
     final token = _decodedToken;
     if (token == null) return true;
     return JwtDecoder.isExpired(token['exp'].toString());
+  }
+
+  String? getRoles() => prefs.getString('user_roles');
+  List<String> getSelectedRole() {
+    final rolesString = prefs.getString('user_selected_role');
+    if (rolesString == null || rolesString.isEmpty) return [];
+    return rolesString.split(',').map((r) => r.trim()).toList();
   }
 }

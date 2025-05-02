@@ -231,8 +231,8 @@ class MainAppDrawer extends StatelessWidget {
                 if (homePageController.isLoading) {
                   return const CircularProgressIndicator(color: Colors.black);
                 } else if (homePageController.isLoggedOut == false &&
-                    userName != null &&
-                    phone != null) {
+                    userName!.isNotEmpty &&
+                    phone!.isNotEmpty) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

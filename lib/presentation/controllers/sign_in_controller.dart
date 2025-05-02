@@ -78,8 +78,12 @@ class SignInController extends ChangeNotifier {
     );
     final userInfo = await session.getUserInfo(prefs);
 
-    _roleController.text = userInfo.selectedRole;
-    _selectedRole = userInfo.selectedRole;
+    _roleController.text = userInfo.selectedRole.isNotEmpty
+        ? userInfo.selectedRole
+        : "Select Role";
+    _selectedRole = userInfo.selectedRole.isNotEmpty
+        ? userInfo.selectedRole
+        : "Select Role";
     notifyListeners();
 
     if (_rememberMe == true && userInfo.email.isNotEmpty) {
@@ -146,6 +150,7 @@ class SignInController extends ChangeNotifier {
       final responseData = json.decode(response.body);
 
       print('Response Data: $responseData');
+      print('Response Data: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         Provider.of<NavigationController>(navigatorKey.currentContext!,
@@ -160,25 +165,32 @@ class SignInController extends ChangeNotifier {
         await Provider.of<SessionController>(navigatorKey.currentContext!,
                 listen: false)
             .saveToken(accessToken, _selectedRole);
+        if (Provider.of<SessionController>(navigatorKey.currentContext!,
+                    listen: false)
+                .isAuthenticated ==
+            true) {
+          // Handle the successful response here
+          CustomSnackbar.show(
+            message,
+            isError: false,
+          );
 
-        // Handle the successful response here
-        CustomSnackbar.show(
-          message,
-          isError: false,
-        );
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MainApp(
-                key: UniqueKey(),
-                onToggleDarkMode: onToggleDarkMode,
-                isDarkMode: isDarkMode),
-          ),
-        );
-        _isLoading = false;
-        notifyListeners();
-      } else if (response.statusCode == 400) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MainApp(
+                  key: UniqueKey(),
+                  onToggleDarkMode: onToggleDarkMode,
+                  isDarkMode: isDarkMode),
+            ),
+          );
+          _isLoading = false;
+          notifyListeners();
+        } else {
+          _isLoading = false;
+          notifyListeners();
+        }
+      } else if (response.statusCode == 403) {
         _isLoading = false;
         notifyListeners();
         final Map<String, dynamic> responseData = json.decode(response.body);
@@ -189,6 +201,7 @@ class SignInController extends ChangeNotifier {
             MaterialPageRoute(
               builder: (context) => VerifyEmail(
                   key: UniqueKey(),
+                  email: email,
                   onToggleDarkMode: onToggleDarkMode,
                   isDarkMode: isDarkMode),
             ),

@@ -291,11 +291,11 @@ class SignUpController extends ChangeNotifier {
     if (response.statusCode == 201) {
       Provider.of<NavigationController>(context, listen: false)
           .setSelectedIndex(0);
-      final String accessToken = responseData['data']['accessToken'];
+      //final String accessToken = responseData['data']['accessToken'];
       final String message = responseData['message'];
 
       //await storage.write(key: 'userRole', value: _selectedRole);
-      await storage.write(key: 'accessToken', value: accessToken);
+      //await storage.write(key: 'accessToken', value: accessToken);
 
       // Handle successful response
       CustomSnackbar.show(
@@ -309,6 +309,7 @@ class SignUpController extends ChangeNotifier {
         MaterialPageRoute(
           builder: (context) => VerifyEmail(
               key: UniqueKey(),
+              email: email,
               onToggleDarkMode: onToggleDarkMode,
               isDarkMode: isDarkMode),
         ),
@@ -327,6 +328,7 @@ class SignUpController extends ChangeNotifier {
           MaterialPageRoute(
             builder: (context) => VerifyEmail(
                 key: UniqueKey(),
+                email: email,
                 onToggleDarkMode: onToggleDarkMode,
                 isDarkMode: isDarkMode),
           ),

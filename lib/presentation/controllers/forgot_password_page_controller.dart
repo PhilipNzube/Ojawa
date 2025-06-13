@@ -71,7 +71,7 @@ class ForgotPasswordPageController extends ChangeNotifier {
     notifyListeners();
 
     final response = await http.post(
-      Uri.parse('https://dev-server.ojawa.africa/api/v1/forgot-password'),
+      Uri.parse('https://dev-server.ojawa.africa/api/v1/auth/forgot-password'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email}),
     );
@@ -146,12 +146,12 @@ class ForgotPasswordPageController extends ChangeNotifier {
     notifyListeners();
 
     final response = await http.post(
-      Uri.parse('https://dev-server.ojawa.africa/api/v1/passowrd/reset'),
+      Uri.parse('https://dev-server.ojawa.africa/api/v1/auth/reset-password'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'email': email,
         'password': password,
-        'token': token,
+        'code': token,
         //'password_confirmation': passwordConfirmation,
       }),
     );
